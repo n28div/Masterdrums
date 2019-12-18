@@ -15,6 +15,6 @@ namespace MasterDrums.Utils
         /// The abstract method used to update the internal state based on the Observable object.
         /// </summary>
         /// <param name="subj">The observed object.</param>
-        void Update(Subject subj);
+        void Update(ISubject subj);
     }
 }

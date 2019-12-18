@@ -8,15 +8,56 @@ using MasterDrums.Utils;
 namespace MasterDrums.Model
 {
     /// <summary>
-    /// Abstract class that produces the notes to be played.
+    /// Class that produces the notes to be played randomly.
+    /// The class is a singleton.
     /// </summary>
     class RandomNoteGenerator : INoteGenerator
     {
+        private static RandomNoteGenerator _instance = null;
+
+        /// <summary>
+        /// RandomNoteGenerator constructor simply calls the INoteGenerator constructor.
+        /// </summary>
+        /// <param name="bpm">The initial bpm</param>
+        public RandomNoteGenerator(int bpm) : base(bpm) { }
+
+        /// <summary>
+        /// RandomNoteGenerator constructor simply calls the empty INoteGenerator constructor.
+        /// </summary>
+        public RandomNoteGenerator() : base() { }
+
+        /// <summary>
+        /// The method used to get the note generator instance.
+        /// If the instance is already created the bpm parameter is ignored.
+        /// </summary>
+        /// <param name="bpm">The initial bpm parameter</param>
+        /// <returns>The RandomNoteGenerator instance</returns>
+        public RandomNoteGenerator Instance(int bpm)
+        {
+            if (_instance == null)
+                _instance = new RandomNoteGenerator(bpm);
+
+            return _instance;
+        }
+
+        /// <summary>
+        /// The method used to get the note generator instance.
+        /// Default bpm to 50.
+        /// </summary>
+        /// <returns>The RandomNoteGenerator instance</returns>
+        public RandomNoteGenerator Instance()
+        {
+            if (_instance == null)
+                _instance = new RandomNoteGenerator();
+
+            return _instance;
+        }
+
         /// <summary>
         /// Generate a random note
         /// </summary>
         /// <returns>The note instance</returns>
-        public INote NextNote()
+        public override INote NextNote()
         {
             Random rnd = new Random();
             INote.notePosition pos;

@@ -1,33 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
+﻿using System.Threading;
 using MasterDrums.Utils;
 
 namespace MasterDrums.Model
 {
     /// <summary>
     /// Abstract class for the note generator objects.
-    /// The class implements the Singleton design pattern (only one note generator can be instanced)
-    /// based on the solution in https://stackoverflow.com/questions/16745629/how-to-abstract-a-singleton-class
-    /// and the Observer generator (to communicate the generated note).
+    /// The class implements the Observer generator (to communicate the generated note).
     /// </summary>
-    abstract class INoteGenerator<T> : Subject where T: INoteGenerator<T>, new()
+    abstract class INoteGenerator : ISubject
     {
         private int _bpm;
         private Thread _generatorThread;
         private bool _isRunning;
         private INote _noteGenerated;
 
-        // singleton properties
-        private static T _instance = null;
-
         /// <summary>
         /// Constructor that sets the initial bpm value and create the internal thread used to infinetely generate notes.
         /// </summary>
         /// <param name="bpm">The bpm value</param>
-        private INoteGenerator(int bpm)
+        public INoteGenerator(int bpm)
         {
             this._bpm = bpm;
             this._generatorThread = new Thread(new ThreadStart(this.InternalThreadRoutine));
@@ -35,21 +26,9 @@ namespace MasterDrums.Model
         }
 
         /// <summary>
-        /// The Instance method returns the note generator instance.
-        /// The solution is based on https://stackoverflow.com/questions/16745629/how-to-abstract-a-singleton-class.
+        /// Constructor that sets the initial bpm to 50 and create the internal thread used to infinetely generate notes.
         /// </summary>
-        /// <param name="bpm">The initial bpm value</param>
-        /// <returns>The object instance</returns>
-        public static T Instance(int bpm)
-        {
-            if (_instance == null)
-            {
-                _instance = new T();
-                _instance.Bpm = bpm;
-            }
-
-            return _instance;
-        }
+        public INoteGenerator(): this(50) { }
 
         /// <summary>
         /// Bpm property.
