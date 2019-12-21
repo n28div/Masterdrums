@@ -12,6 +12,8 @@ namespace MasterDrums.Model
         private int _bpm;
         private Thread _generatorThread;
         private bool _isRunning;
+        private bool _isPaused;
+        private Semaphore _resume;
         private INote _noteGenerated;
 
         /// <summary>
@@ -22,6 +24,8 @@ namespace MasterDrums.Model
         {
             this._bpm = bpm;
             this._generatorThread = new Thread(new ThreadStart(this.InternalThreadRoutine));
+            this._resume = new Semaphore(0, 1);
+            this._isPaused = false;
             this._isRunning = false;
         }
 
@@ -54,15 +58,23 @@ namespace MasterDrums.Model
         /// </summary>
         private void InternalThreadRoutine()
         {
+            bool isResumed = true;
+
             while (this._isRunning)
             {
-                this._noteGenerated = this.NextNote();
-                this.Notify();
+                if (this._isPaused)
+                    isResumed = this._resume.WaitOne(500);
 
-                // to calculate the time needed to sleep we simply need to divide 60 (the seconds in 1 minute) by the bpm
-                // the time calculated is in seconds, so whe convert it into milliseconds
-                int timeToSleep = (60 / this._bpm) * 1000;
-                Thread.Sleep(timeToSleep);
+                if (isResumed)
+                {
+                    this._noteGenerated = this.NextNote();
+                    this.Notify();
+
+                    // to calculate the time needed to sleep we simply need to divide 60 (the seconds in 1 minute) by the bpm
+                    // the time calculated is in seconds, so whe convert it into milliseconds
+                    int timeToSleep = (60 / this._bpm) * 1000;
+                    Thread.Sleep(timeToSleep);
+                }
             }
         }
 
@@ -88,5 +100,24 @@ namespace MasterDrums.Model
             this._generatorThread.Start();
             this._isRunning = false;
         }
+
+        /// <summary>
+        /// Pause the internal thread
+        /// </summary>
+        public void Pause()
+        {
+            this._isPaused = true;
+        }
+
+        /// <summary>
+        /// Resume the game
+        /// </summary>
+        public void Resume()
+        {
+            this._resume.Release();
+            this._isPaused = false;
+        }
+
+
     }
 }

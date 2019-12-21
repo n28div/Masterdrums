@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MasterDrums.Model
 {
-    abstract class INote
+    public abstract class INote
     {
 
         /// <summary>
