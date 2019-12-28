@@ -18,6 +18,8 @@ namespace MasterDrums.View
 
             this.TableSetup();
             this.ButtonsSetup();
+
+            this.BackColor = Color.DarkGray;
         }
 
         /// <summary>
@@ -49,6 +51,7 @@ namespace MasterDrums.View
             buttonNewGame.Margin = new Padding(10);
             buttonNewGame.Text = "Nuova partita";
             buttonNewGame.UseVisualStyleBackColor = true;
+            buttonNewGame.Click += new EventHandler((s, e) => this._mainView.StartNewGame());
             this.Controls.Add(buttonNewGame, 0, 0);
 
             Button buttonHighscores = new Button();
@@ -57,6 +60,7 @@ namespace MasterDrums.View
             buttonHighscores.Margin = new Padding(10);
             buttonHighscores.Text = "Record";
             buttonHighscores.UseVisualStyleBackColor = true;
+            buttonHighscores.Click += new EventHandler((s, e) => this._mainView.ShowHighscoreView());
             this.Controls.Add(buttonHighscores, 0, 1);
 
             Button buttonQuit = new Button();

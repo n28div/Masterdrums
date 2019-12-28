@@ -10,6 +10,7 @@ namespace MasterDrums.Controller
     public class MainController : IController
     {
         private MainView _view;
+        private string _playerName = null;
 
         /// <summary>
         /// Constructor method.
@@ -30,9 +31,26 @@ namespace MasterDrums.Controller
             Application.Run(this._view);
         }
 
+        /// <summary>
+        /// Close the game
+        /// </summary>
         public void Quit()
         {
             Application.Exit();
+        }
+
+        /// <summary>
+        /// Starts a new game
+        /// </summary>
+        public void StartGame()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public string PlayerName
+        {
+            set => this._playerName = value;
+            get => this._playerName;
         }
     }
 }

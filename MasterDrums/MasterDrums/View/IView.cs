@@ -12,12 +12,6 @@ namespace MasterDrums.View
     public interface IView
     {
         /// <summary>
-        /// Method used to remove all the views from the main panel
-        /// </summary>
-        void ClearView();
-
-        #region Main menu
-        /// <summary>
         /// Shows the menu where the user can leave the game mode and change the commands
         /// </summary>
         void ShowMenuView();
@@ -36,7 +30,16 @@ namespace MasterDrums.View
         /// Shows the view containing the records of the game.
         /// </summary>
         void ShowHighscoreView();
-        #endregion
+
+        /// <summary>
+        /// Shows the view that asks to the user his name
+        /// </summary>
+        void ShowPlayerNameView();
+
+        /// <summary>
+        /// User has set his name and is ready to start to play the game.
+        /// </summary>
+        void SetPlayerName(string name);
 
         /// <summary>
         /// Shows the view where the user can change the commands used to play.

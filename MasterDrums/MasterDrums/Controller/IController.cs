@@ -16,5 +16,20 @@ namespace MasterDrums.Controller
         /// Close the application.
         /// </summary>
         void Quit();
+
+        /// <summary>
+        /// Starts the game
+        /// </summary>
+        void StartGame();
+
+        /// <summary>
+        /// The name of the player who's playing.
+        /// </summary>
+        string PlayerName
+        {
+            set;
+            get;
+        }
+
     }
 }
