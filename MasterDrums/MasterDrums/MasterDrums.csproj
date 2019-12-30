@@ -46,6 +46,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controller\IController.cs" />
+    <Compile Include="Controller\MainController.cs" />
+    <Compile Include="Exception\GameOptionException.cs" />
+    <Compile Include="Exception\InsertedNameExcpetion.cs" />
+    <Compile Include="Model\Game.cs" />
+    <Compile Include="Model\IGame.cs" />
     <Compile Include="Model\INoteGenerator.cs" />
     <Compile Include="Model\RandomNoteGenerator.cs" />
     <Compile Include="Model\SpecialNote.cs" />
@@ -58,22 +64,34 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resource1.resx</DependentUpon>
     </Compile>
-    <Compile Include="SchermataPrincipale.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="SchermataPrincipale.Designer.cs">
-      <DependentUpon>SchermataPrincipale.cs</DependentUpon>
-    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Utils\Subject.cs" />
+    <Compile Include="Test.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Test.Designer.cs">
+      <DependentUpon>Test.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Utils\ISingleton.cs" />
+    <Compile Include="Utils\ISubject.cs" />
     <Compile Include="Utils\IObserver.cs" />
+    <Compile Include="View\IMainView.cs" />
+    <Compile Include="View\IPlayingView.cs" />
+    <Compile Include="View\MainMenuPanel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="View\MainView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\NewGamePanel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="View\PlayingPanel.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <EmbeddedResource Include="Resource1.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resource1.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Include="SchermataPrincipale.resx">
-      <DependentUpon>SchermataPrincipale.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -85,6 +103,12 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <EmbeddedResource Include="Test.resx">
+      <DependentUpon>Test.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\MainView.resx">
+      <DependentUpon>MainView.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -101,9 +125,6 @@
   <ItemGroup>
     <Content Include="record.txt" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Controller\" />
-    <Folder Include="View\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

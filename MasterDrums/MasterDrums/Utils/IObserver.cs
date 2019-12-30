@@ -9,7 +9,7 @@ namespace MasterDrums.Utils
     /// <summary>
     /// Interface for the Observable actor used for the Observable pattern.
     /// </summary>
-    interface IObserver
+    public interface IObserver
     {
         /// <summary>
         /// The abstract method used to update the internal state based on the Observable object.

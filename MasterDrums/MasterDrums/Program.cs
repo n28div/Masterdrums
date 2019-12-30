@@ -1,18 +1,20 @@
 ﻿using System;
 using MasterDrums.Controller;
+using MasterDrums.View;
+using System.Windows.Forms;
 
 namespace MasterDrums
 {
     static class Program
     {
         /// <summary>
-        /// Punto di ingresso principale dell'applicazione.
+        /// Application entry point
         /// </summary>
         [STAThread]
         static void Main()
         {
             MainController controller = new MainController();
-            controller.Run();
+            MainView view = new MainView(controller);
         }
     }
 }

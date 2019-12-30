@@ -7,8 +7,11 @@ namespace MasterDrums.Model
     /// Abstract class for the note generator objects.
     /// The class implements the Observer generator (to communicate the generated note).
     /// </summary>
-    abstract class INoteGenerator : ISubject
+    public abstract class INoteGenerator : ISubject
     {
+        public const int MIN_BPM = 30;
+        public const int MAX_BPM = 300;
+
         private int _bpm;
         private Thread _generatorThread;
         private bool _isRunning;
@@ -41,7 +44,7 @@ namespace MasterDrums.Model
         public int Bpm
         {
             get => this._bpm;
-            set => this._bpm = (value < 30 || value > 300) ? 50 : value;
+            set => this._bpm = (value < MIN_BPM || value > MAX_BPM) ? MIN_BPM : value;
         }
 
         /// <summary>

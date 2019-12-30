@@ -64,13 +64,13 @@ namespace MasterDrums.Model
             INote outNote;
 
             // right or left position is determined with a random boolean
-            if (rnd.Next(2) == 0)
+            if (rnd.Next(0, 2) == 0)
                 pos = INote.notePosition.Left;
             else
                 pos = INote.notePosition.Right;
 
             // note type is determined with a random number from 1 to 10
-            int noteType = rnd.Next(10) + 1;
+            int noteType = rnd.Next(1, 11);
 
             // if the random number is in the range [1, 6] a standard note is generated
             // if in the range [7, 9] a pause note is generated

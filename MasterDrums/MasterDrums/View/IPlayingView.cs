@@ -47,13 +47,5 @@ namespace MasterDrums.View
         /// and how much delay there was between the hit and the estimed perfect hit
         /// </summary>
         void LaunchPauseNote();
-
-        /// <summary>
-        /// The score totalized by the user
-        /// </summary>
-        int Score {
-            get;
-            set;
-        }
     }
 }

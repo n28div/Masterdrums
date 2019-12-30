@@ -1,14 +1,18 @@
-﻿using MasterDrums.Controller;
+﻿using MasterDrums.Model;
+using MasterDrums.Controller;
+using System;
 using System.Windows.Forms;
 using System.Drawing;
 
+
 namespace MasterDrums.View
 {
-    public class MainView: Form, IView
+    public class MainView: Form, IMainView
     {
         private IController _controller;
         private MainMenuPanel _mainMenuPanel;
-        private PlayerNamePanel _playerNamePanel;
+        private NewGamePanel _newGamePanel;
+        private PlayingPanel _playingPanel;
 
         /// <summary>
         /// Constructor that sets the controller to interact with the application model.
@@ -16,14 +20,22 @@ namespace MasterDrums.View
         /// <param name="controller">The instance of the controller</param>
         public MainView(IController controller)
         {
+            Application.EnableVisualStyles();
+
             this._controller = controller;
+            this._controller.MainView = this;
+
             this._mainMenuPanel = new MainMenuPanel(this);
-            this._playerNamePanel = new PlayerNamePanel(this);
+            this._newGamePanel = new NewGamePanel(this);
+            this._playingPanel = new PlayingPanel(this);
 
             this.InitializeComponent();
-            this.ShowMenuView();
+            this.ShowMainMenuView();
+
+            Application.Run(this);
         }
 
+        #region Panels setup methods
         /// <summary>
         /// Method used to initialize form components
         /// </summary>
@@ -39,7 +51,8 @@ namespace MasterDrums.View
             this.ResumeLayout(false);
 
             this.MainMenuPanelSetup();
-            this.PlayerNamePanelSetup();
+            this.NewGamePanelSetup();
+            this.PlayingPanelSetup();
         }
 
         /// <summary>
@@ -60,44 +73,53 @@ namespace MasterDrums.View
         /// <summary>
         /// Sets up the player name panel in the form and hides it
         /// </summary>
-        private void PlayerNamePanelSetup()
+        private void NewGamePanelSetup()
         {
             int panelWidth = this.ClientSize.Width / 2;
             int panelHeight = this.ClientSize.Height / 2;
             int panelX = (this.ClientSize.Width / 2) - (panelWidth / 2);
             int panelY = (this.ClientSize.Height / 2) - (panelHeight / 2);
-            this._playerNamePanel.Size = new Size(panelWidth, panelHeight);
-            this._playerNamePanel.Location = new Point(panelX, panelY);
-            this.Controls.Add(this._playerNamePanel);
-            this._playerNamePanel.Hide();
+            this._newGamePanel.Size = new Size(panelWidth, panelHeight);
+            this._newGamePanel.Location = new Point(panelX, panelY);
+            this.Controls.Add(this._newGamePanel);
+            this._newGamePanel.Hide();
         }
 
+        /// <summary>
+        /// Sets up the playing panel in the form and hides it
+        /// </summary>
+        private void PlayingPanelSetup()
+        {
+            int panelWidth = this.ClientSize.Width;
+            int panelHeight = this.ClientSize.Height;
+            int panelX = 0;
+            int panelY = 0;
+            this._playingPanel.Size = new Size(panelWidth, panelHeight);
+            this._playingPanel.Location = new Point(panelX, panelY);
+            this.Controls.Add(this._playingPanel);
+            this._playingPanel.Hide();
+        }
+        #endregion
+
+        #region Panels display methods
         /// <summary>
         /// Remove all controls from the main panel
         /// </summary>
         private void ClearView()
         {
             this._mainMenuPanel.Hide();
-            this._playerNamePanel.Hide();
+            this._newGamePanel.Hide();
         }
 
         /// <summary>
         /// Shows the main menu
         /// </summary>
-        public void ShowMenuView()
-        {
-            this.ClearView();
-            this._mainMenuPanel.Show();
-        }
+        public void ShowMainMenuView() => this._mainMenuPanel.Show();
 
         /// <summary>
         /// Shows the player name menu
         /// </summary>
-        public void ShowPlayerNameView()
-        {
-            this.ClearView();
-            this._playerNamePanel.Show();
-        }
+        public void ShowNewGameView() => this._newGamePanel.Show();
 
         public void ShowCommandsView()
         {
@@ -120,32 +142,78 @@ namespace MasterDrums.View
         }
 
         /// <summary>
-        /// Called when the user click on the Start new game button.
-        /// If the username is set then the game starts, otherwise the player name panel is showed.
+        /// Shows the playing view
         /// </summary>
-        public void StartNewGame()
-        {
-            if (this._controller.PlayerName == null)
-                this.ShowPlayerNameView();
-            else
-            {
-                this._controller.StartGame();
-                // start game
-            }
+        public void ShowPlayingView() => this._playingPanel.Show();
+        #endregion
 
+        /// <summary>
+        /// Called when the user clicks on the new game button in the main menu panel.
+        /// Shows the new game panel which will ask the user to insert his name, initial bpm and game mode.
+        /// </summary>
+        public void NewGame()
+        {
+            this.ClearView();
+            this.ShowNewGameView();
         }
 
-        public void Quit()
+        public void Highscores()
         {
-            this._controller.Quit();
+            throw new System.NotImplementedException();
         }
 
         /// <summary>
-        /// Set the players name
+        /// Close the application
         /// </summary>
-        /// <param name="name">The player name</param>
-        public void SetPlayerName(string n) {
-            this._controller.PlayerName = n;
+        public void Quit() => Application.Exit();
+
+        /// <summary>
+        /// Hide all the panels and show tha gaming panel.
+        /// Communicate to the controller that the user wants to start the game
+        /// </summary>
+        /// <param name="playerName"></param>
+        /// <param name="initialBpm"></param>
+        /// <param name="gameMode"></param>
+        public void StartGame(string playerName, int initialBpm, INoteGenerator gameMode)
+        {
+            this.ClearView();
+            this.ShowPlayingView();
+
+            this._controller.PlayerName = playerName;
+            this._controller.InitialBpm = initialBpm;
+            this._controller.GameMode = gameMode;
+
+            this._controller.StartGame();
+        }
+
+        public void LeftNoteHit()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void RightNoteHit()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        /// <summary>
+        /// Show a left note on the screen.
+        /// </summary>
+        public void LaunchLeftNote(INote note)
+        {
+            // Invoke is needed cause the method is called from another thread.
+            // Form control update is not permitted cross-thread! 
+            this.Invoke(new Action<INote>(this._playingPanel.LaunchLeftNote), new object[] { note });
+        }
+
+        /// <summary>
+        /// Show a right note on the screen.
+        /// </summary>
+        public void LaunchRightNote(INote note)
+        {
+            // Invoke is needed cause the method is called from another thread.
+            // Form control update is not permitted cross-thread!
+            this.Invoke(new Action<INote>(this._playingPanel.LaunchRightNote), new object[] { note });
         }
     }
 }

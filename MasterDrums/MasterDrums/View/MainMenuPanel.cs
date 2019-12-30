@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MasterDrums.Controller;
+using System;
 using System.Windows.Forms;
 using System.Drawing;
 
@@ -6,13 +7,13 @@ namespace MasterDrums.View
 {
     class MainMenuPanel: TableLayoutPanel
     {
-        IView _mainView;
+        private IMainView _mainView;
 
         /// <summary>
         /// Main menu panel is a table with one column and 4 rows.
         /// The 3rd row is used as a spacing row.
         /// </summary>
-        public MainMenuPanel(IView mainView) : base()
+        public MainMenuPanel(IMainView mainView) : base()
         {
             this._mainView = mainView;
 
@@ -51,7 +52,7 @@ namespace MasterDrums.View
             buttonNewGame.Margin = new Padding(10);
             buttonNewGame.Text = "Nuova partita";
             buttonNewGame.UseVisualStyleBackColor = true;
-            buttonNewGame.Click += new EventHandler((s, e) => this._mainView.StartNewGame());
+            buttonNewGame.Click += new EventHandler((s, e) => this._mainView.NewGame());
             this.Controls.Add(buttonNewGame, 0, 0);
 
             Button buttonHighscores = new Button();
@@ -60,7 +61,7 @@ namespace MasterDrums.View
             buttonHighscores.Margin = new Padding(10);
             buttonHighscores.Text = "Record";
             buttonHighscores.UseVisualStyleBackColor = true;
-            buttonHighscores.Click += new EventHandler((s, e) => this._mainView.ShowHighscoreView());
+            buttonHighscores.Click += new EventHandler((s, e) => this._mainView.Highscores());
             this.Controls.Add(buttonHighscores, 0, 1);
 
             Button buttonQuit = new Button();

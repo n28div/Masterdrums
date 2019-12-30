@@ -9,7 +9,7 @@ namespace MasterDrums.Utils
     /// <summary>
     /// The abstract class that represents the Subject actor in the Observer pattern.
     /// </summary>
-    abstract class ISubject
+    public abstract class ISubject
     {
         /// <summary>
         /// List of actors that are currently observing.
