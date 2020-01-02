@@ -100,7 +100,6 @@ namespace MasterDrums.Model
         /// </summary>
         public void Stop()
         {
-            this._generatorThread.Start();
             this._isRunning = false;
         }
 

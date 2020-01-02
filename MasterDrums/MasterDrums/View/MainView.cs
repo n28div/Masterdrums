@@ -40,6 +40,9 @@ namespace MasterDrums.View
                     case Keys.N:
                         this.RightNoteHit();
                         break;
+                    case Keys.Escape:
+                        this.Quit();
+                        break;
                 }
             };
 
@@ -57,7 +60,11 @@ namespace MasterDrums.View
         {
             // Main form setup
             this.SuspendLayout();
-            this.ClientSize = new Size(1280, 720);
+
+            int screenWidth = Screen.PrimaryScreen.Bounds.Width;
+            int screenHeight = Screen.PrimaryScreen.Bounds.Height;
+
+            this.ClientSize = new Size(screenWidth, screenHeight);
             this.ControlBox = false;
             this.FormBorderStyle = FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
@@ -183,7 +190,11 @@ namespace MasterDrums.View
         /// <summary>
         /// Close the application
         /// </summary>
-        public void Quit() => Application.Exit();
+        public void Quit()
+        {
+            this._controller.StopGame();
+            Application.Exit();
+        }
 
         /// <summary>
         /// Hide all the panels and show tha gaming panel.
