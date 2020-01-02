@@ -21,13 +21,27 @@ namespace MasterDrums.View
         public MainView(IController controller)
         {
             Application.EnableVisualStyles();
-
+            
             this._controller = controller;
             this._controller.MainView = this;
 
             this._mainMenuPanel = new MainMenuPanel(this);
             this._newGamePanel = new NewGamePanel(this);
             this._playingPanel = new PlayingPanel(this);
+
+            this.KeyPreview = true;
+            this.KeyUp += (s, e) =>
+            {
+                switch (e.KeyCode)
+                {
+                    case Keys.C:
+                        this.LeftNoteHit();
+                        break;
+                    case Keys.N:
+                        this.RightNoteHit();
+                        break;
+                }
+            };
 
             this.InitializeComponent();
             this.ShowMainMenuView();
@@ -144,7 +158,11 @@ namespace MasterDrums.View
         /// <summary>
         /// Shows the playing view
         /// </summary>
-        public void ShowPlayingView() => this._playingPanel.Show();
+        public void ShowPlayingView()
+        {
+            this._playingPanel.Draw();
+            this._playingPanel.Show();
+        }
         #endregion
 
         /// <summary>
@@ -186,14 +204,20 @@ namespace MasterDrums.View
             this._controller.StartGame();
         }
 
+        /// <summary>
+        /// Left note has been hit
+        /// </summary>
         public void LeftNoteHit()
         {
-            throw new System.NotImplementedException();
+            this._playingPanel.LeftNoteHit();
         }
 
+        /// <summary>
+        /// Right note hit attempt
+        /// </summary>
         public void RightNoteHit()
         {
-            throw new System.NotImplementedException();
+            this._playingPanel.RightNoteHit();
         }
 
         /// <summary>

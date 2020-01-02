@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -25,19 +26,16 @@ namespace MasterDrums.Model
             Right
         }
 
-        protected String _imagePath;
-        protected String _soundPath;
         protected notePosition _position;
 
         /// <summary>
         /// The image displayed in the note PictureBox
         /// </summary>
         /// <returns>
-        /// The path where the image can be find
+        /// The image instance
         /// </returns>
-        public virtual String ImagePath
-        {
-            get => this._imagePath;
+        public abstract Image image {
+            get;
         }
 
         /// <summary>
@@ -46,9 +44,9 @@ namespace MasterDrums.Model
         /// <returns>
         /// The path where the sound can be find
         /// </returns>
-        public virtual String SoundPath
+        public abstract String SoundPath
         {
-            get => this._soundPath;
+            get;
         }
 
         /// <summary>

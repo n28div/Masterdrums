@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,17 +20,12 @@ namespace MasterDrums.Model
         public PauseNote(notePosition pos)
         {
             this._position = pos;
-            this._imagePath = null;
-            this._soundPath = null;
         }
 
         /// <summary>
         /// Image path is non avaiable for the pause note
         /// </summary>
-        public override String ImagePath
-        {
-            get => throw new PauseNotePropertyExcpetion();
-        }
+        public override Image image => throw new PauseNotePropertyExcpetion();
 
         /// <summary>
         /// Sound path is non avaiable for the pause note
@@ -43,6 +39,5 @@ namespace MasterDrums.Model
         /// The pause note hit points are zero
         /// </summary>
         public override int HitPoint => 0;
-
     }
 }

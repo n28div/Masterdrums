@@ -8,11 +8,10 @@ namespace MasterDrums.View
     public interface IPlayingView
     {
         /// <summary>
-        /// The exact time at which the hit is considered as perfect.
-        /// The value is relative to the note launch.
+        /// The time that a note takes in order to go from the top of the screen to the perfect hit spot.
         /// </summary>
-        /// <returns>The time value</returns>
-        double PerfectHitTime {
+        float NoteRideTime
+        {
             get;
         }
 
@@ -26,8 +25,7 @@ namespace MasterDrums.View
         /// <summary>
         /// Method called when a left note is hitted.
         /// </summary>
-        /// <param name="delta">The distance from the perfect hit time in ms</param>
-        void LeftNoteHitted(double delta);
+        void LeftNoteHit();
 
         /// <summary>
         /// Launch a right note on the screen and takes care of signaling when the note has been hit
@@ -39,13 +37,6 @@ namespace MasterDrums.View
         /// <summary>
         /// Method called when a right note is hitted.
         /// </summary>
-        /// <param name="delta">The distance from the perfect hit time in ms</param>
-        void RightNoteHitted(double delta);
-
-        /// <summary>
-        /// Launch a pause note on the screen and takes care of signaling when the note has been hit
-        /// and how much delay there was between the hit and the estimed perfect hit
-        /// </summary>
-        void LaunchPauseNote();
+        void RightNoteHit();
     }
 }

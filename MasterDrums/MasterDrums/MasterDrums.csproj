@@ -33,6 +33,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="NAudio, Version=1.9.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\NAudio.1.9.0\lib\net35\NAudio.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -59,10 +62,10 @@
     <Compile Include="Exception\PauseNotePropertyExcpetion.cs" />
     <Compile Include="Model\StandardNote.cs" />
     <Compile Include="Model\INote.cs" />
-    <Compile Include="Resource1.Designer.cs">
+    <Compile Include="Resource.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>Resource1.resx</DependentUpon>
+      <DependentUpon>Resource.resx</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -72,10 +75,12 @@
     <Compile Include="Test.Designer.cs">
       <DependentUpon>Test.cs</DependentUpon>
     </Compile>
+    <Compile Include="Utils\ImageUtils.cs" />
     <Compile Include="Utils\ISingleton.cs" />
     <Compile Include="Utils\ISubject.cs" />
     <Compile Include="Utils\IObserver.cs" />
     <Compile Include="View\IMainView.cs" />
+    <Compile Include="View\IPanel.cs" />
     <Compile Include="View\IPlayingView.cs" />
     <Compile Include="View\MainMenuPanel.cs">
       <SubType>Component</SubType>
@@ -89,9 +94,9 @@
     <Compile Include="View\PlayingPanel.cs">
       <SubType>Component</SubType>
     </Compile>
-    <EmbeddedResource Include="Resource1.resx">
+    <EmbeddedResource Include="Resource.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resource1.Designer.cs</LastGenOutput>
+      <LastGenOutput>Resource.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -109,6 +114,7 @@
     <EmbeddedResource Include="View\MainView.resx">
       <DependentUpon>MainView.cs</DependentUpon>
     </EmbeddedResource>
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -124,6 +130,14 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="record.txt" />
+    <None Include="Resources\special.gif" />
+    <None Include="Resources\green.png" />
+    <None Include="Resources\blue.png" />
+    <None Include="Resources\yellow.png" />
+    <None Include="Resources\snare_hit.wav" />
+    <None Include="Resources\left stick.png" />
+    <None Include="Resources\right stick.png" />
+    <None Include="Resources\snare.png" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

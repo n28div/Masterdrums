@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,22 +20,6 @@ namespace MasterDrums.Model
         public StandardNote(notePosition pos)
         {
             this._position = pos;
-            this._imagePath = @"";
-            this._soundPath = @"";
-        }
-
-        /// <summary>
-        /// Constructor of the class that sets the note position and the sound and image path
-        /// </summary>
-        /// <param name="pos">The note position</param>
-        /// <param name="imagePath">The image path relative to the executable folder</param>
-        /// <param name="soundPath">The sound path relative to the executable folder</param>
-        public StandardNote(notePosition pos, String imagePath, String soundPath)
-        { 
-            // TODO: da controllare se sound path e image path esistono 
-            this._position = pos;
-            this._imagePath = imagePath;
-            this._soundPath = soundPath;
         }
 
         /// <summary>
@@ -42,5 +27,27 @@ namespace MasterDrums.Model
         /// </summary>
         public override int HitPoint => 100;
 
+        /// <summary>
+        /// Random from green, blue and yellow
+        /// </summary>
+        public override Image image {
+            get
+            {
+                Image im;
+                Random rnd = new Random();
+                int r = rnd.Next(0, 3);
+
+                if (r == 0)
+                    im = Resource.yellow;
+                else if (r == 1)
+                    im = Resource.blue;
+                else
+                    im = Resource.green;
+
+                return im;
+            }
+        }
+
+        public override string SoundPath => throw new NotImplementedException();
     }
 }
