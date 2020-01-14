@@ -7,14 +7,11 @@ using System.Threading.Tasks;
 
 namespace MasterDrums.Model
 {
+    /// <summary>
+    /// Abstract class that represents the base note
+    /// </summary>
     public abstract class INote
     {
-
-        /// <summary>
-        /// Abstract class that represents the base note
-        /// </summary>
-        /// 
-
         /// <summary>
         /// Enumerator for the note position (left or right).
         /// </summary>
@@ -34,7 +31,7 @@ namespace MasterDrums.Model
         /// <returns>
         /// The image instance
         /// </returns>
-        public abstract Image image {
+        public abstract Image Image {
             get;
         }
 

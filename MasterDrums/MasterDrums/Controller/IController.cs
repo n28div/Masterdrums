@@ -43,6 +43,14 @@ namespace MasterDrums.Controller
         }
 
         /// <summary>
+        /// The current bpm
+        /// </summary>
+        int Bpm
+        {
+            get;
+        }
+
+        /// <summary>
         /// The game mode is determined by the it instance.
         /// </summary>
         INoteGenerator GameMode

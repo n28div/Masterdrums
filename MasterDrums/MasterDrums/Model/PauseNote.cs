@@ -25,7 +25,7 @@ namespace MasterDrums.Model
         /// <summary>
         /// Image path is non avaiable for the pause note
         /// </summary>
-        public override Image image => throw new PauseNotePropertyExcpetion();
+        public override Image Image => throw new PauseNotePropertyExcpetion();
 
         /// <summary>
         /// Sound path is non avaiable for the pause note

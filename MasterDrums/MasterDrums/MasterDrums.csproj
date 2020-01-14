@@ -75,6 +75,7 @@
     <Compile Include="Test.Designer.cs">
       <DependentUpon>Test.cs</DependentUpon>
     </Compile>
+    <Compile Include="Utils\Pair.cs" />
     <Compile Include="Utils\ImageUtils.cs" />
     <Compile Include="Utils\ISingleton.cs" />
     <Compile Include="Utils\ISubject.cs" />

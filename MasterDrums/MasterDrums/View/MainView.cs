@@ -236,6 +236,7 @@ namespace MasterDrums.View
         /// </summary>
         public void LaunchLeftNote(INote note)
         {
+            this._playingPanel.Bpm = this._controller.Bpm;
             // Invoke is needed cause the method is called from another thread.
             // Form control update is not permitted cross-thread! 
             this.Invoke(new Action<INote>(this._playingPanel.LaunchLeftNote), new object[] { note });
@@ -246,6 +247,7 @@ namespace MasterDrums.View
         /// </summary>
         public void LaunchRightNote(INote note)
         {
+            this._playingPanel.Bpm = this._controller.Bpm;
             // Invoke is needed cause the method is called from another thread.
             // Form control update is not permitted cross-thread!
             this.Invoke(new Action<INote>(this._playingPanel.LaunchRightNote), new object[] { note });

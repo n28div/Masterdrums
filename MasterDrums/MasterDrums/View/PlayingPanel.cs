@@ -14,7 +14,7 @@ namespace MasterDrums.View
     class PlayingPanel : Panel, IPanel, IPlayingView
     {
         private const int STICK_DOWN_MS = 50;
-        private const float NOTE_PX_PER_MS = 0.3F; 
+        private const int REFRESH_RATE_MS = 1;
 
         private IMainView _mainView;
         private PictureBox _backgroundPictureBox;
@@ -23,16 +23,16 @@ namespace MasterDrums.View
         private bool _rightStickDown = false;
         private WaveOutEvent _outputDevice;
         private WaveFileReader _audio;
-        private Stack<Tuple<INote, Point>> _leftNotes;
-        private Stack<Tuple<INote, Point>> _rightNotes;
 
+        private List<Pair<INote, Point>> _screenNotes;
+        private int _bpm;
+        
         public PlayingPanel(IMainView mainView)
         {
             this._mainView = mainView;
 
-            this._leftNotes = new Stack<Tuple<INote, Point>>();
-            this._rightNotes = new Stack<Tuple<INote, Point>>();
-
+            this._screenNotes = new List<Pair<INote, Point>>();
+            
             this._outputDevice = new WaveOutEvent();
             this._audio = new WaveFileReader(Resource.snare_hit);
             this._outputDevice.Init(this._audio);
@@ -54,7 +54,7 @@ namespace MasterDrums.View
             this._backgroundPictureBox.Paint += this.PaintObjects;
             // Timer to draw continously the view
             Timer drawTimer = new Timer();
-            drawTimer.Interval = 1;
+            drawTimer.Interval = REFRESH_RATE_MS;
             drawTimer.Tick += (s, e) => this._backgroundPictureBox.Invalidate();
             drawTimer.Start();
 
@@ -63,13 +63,20 @@ namespace MasterDrums.View
         }
 
         /// <summary>
-        /// Draw background as if it's quiet (no notes, sticks up)
+        /// Draw the object composing the game scene
         /// </summary>
         private void PaintObjects(object sender, PaintEventArgs e)
-        {
+        {       
+            /*
+            this._msSiceLast += REFRESH_RATE_MS;
+            if (((this._bpm / 60) * 1000) < this._msSiceLast)
+                this._msSiceLast = 0;
+            */
+
             e.Graphics.Clear(Color.White);
 
             this.DrawSnare(e.Graphics);
+            this.DrawNotes(e.Graphics);
 
             if (this._leftStickDown)
                 this.DrawLeftStickDown(e.Graphics);
@@ -185,29 +192,92 @@ namespace MasterDrums.View
         }
 
         /// <summary>
+        /// Draw the notes on the screen
+        /// </summary>
+        /// <param name="g">The graphic object where the drawing is performed</param>
+        private void DrawNotes(Graphics g)
+        {
+            Pair<INote, Point>[] copy = this._screenNotes.ToArray();
+
+            foreach (Pair<INote, Point> p in copy)
+            {
+                INote note = p.Item1;
+                Point curPoint = p.Item2;
+
+                // draw note
+                int noteSide = (int)(this.Width * 0.05);
+                if (note is SpecialNote)
+                    noteSide *= 2;
+                
+                g.DrawImage(note.Image, curPoint.X, curPoint.Y, noteSide, noteSide);
+
+                /*                  |\-----> angle
+                 *                  | \
+                 *  HitSpotY ->     |  \    <- diagonalSpace
+                 *                  |___\
+                 *                     ^-- HitSpotX  
+                 */
+                double diagonalSpace;
+                if (note.Position == INote.notePosition.Left)
+                    diagonalSpace = Math.Sqrt(Math.Pow(this.LeftHitSpotX, 2) + Math.Pow(this.HitSpotY, 2));
+                else
+                    diagonalSpace = Math.Sqrt(Math.Pow(this.RightHitSpotX, 2) + Math.Pow(this.HitSpotY, 2));
+
+                double angle = Math.Acos(this.HitSpotY / diagonalSpace);
+                
+                double speed = this.HitSpotY / ((60000 / this._bpm) / 16);
+
+                double sy = speed * Math.Cos(angle);
+                double sx = speed * Math.Sin(angle);
+
+                int newX;
+                if (note.Position == INote.notePosition.Left)
+                    newX = (int)Math.Ceiling(curPoint.X + sx);
+                else
+                    newX = (int)Math.Ceiling(curPoint.X - sx);
+
+                int newY = (int)Math.Ceiling(curPoint.Y + sy);
+                Point newPoint = new Point(newX, newY);
+                p.Item2 = newPoint;
+
+                if (newPoint.Y > this.HitSpotY)
+                    this._screenNotes.Remove(p);
+            }
+        }
+
+        /// <summary>
         /// Time that a note takes to go from the top of the screen to the bottom in ms
         /// </summary>
         public float NoteRideTime
         {
-            get
-            {
-                int space = (int)(Math.Sqrt(Math.Pow(this.HitSpotY, 2) + Math.Pow(this.LeftHitSpotX, 2)));
-                return NOTE_PX_PER_MS * space;
-            }
+            get => 0;
         }
 
+        public int Bpm
+        {
+            set => this._bpm = value;
+        }
+
+        /// <summary>
+        /// Add the note to the stack of the notes that will be showed
+        /// </summary>
+        /// <param name="note">The note launched</param>
         public void LaunchLeftNote(INote note)
         {
-            this._leftNotes.Push(new Tuple<INote, Point>(note, new Point(0, 0)));
+            this._screenNotes.Add(new Pair<INote, Point>(note, new Point(0, 0)));
         }
 
         public void LaunchPauseNote()
         {
         }
 
+        /// <summary>
+        /// Add the note to the stack of the notes that will be showed
+        /// </summary>
+        /// <param name="note">The note launched</param>
         public void LaunchRightNote(INote note)
         {
-            this._rightNotes.Push(new Tuple<INote, Point>(note, new Point(this.Size.Width, 0)));
+            this._screenNotes.Add(new Pair<INote, Point>(note, new Point(this.Size.Width, 0)));
         }
 
         /// <summary>

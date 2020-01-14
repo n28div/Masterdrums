@@ -27,7 +27,7 @@ namespace MasterDrums.Model
         /// </summary>
         public override int HitPoint => 200;
 
-        public override Image image => Resource.special;
+        public override Image Image => Resource.special;
 
         public override string SoundPath => throw new NotImplementedException();
     }

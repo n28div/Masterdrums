@@ -7,11 +7,12 @@ using System.Threading.Tasks;
 
 namespace MasterDrums.Model
 {
+    /// <summary>
+    /// Class that extends the INote abstract class and represents the standard note 
+    /// </summary>
     class StandardNote : INote
     {
-        /// <summary>
-        /// Class that extends the INote abstract class and represents the standard note 
-        /// </summary>
+        private Image _image = null;
 
         /// <summary>
         /// Constructor of the class that sets the note position. The sound and image path is set to the default value
@@ -30,19 +31,27 @@ namespace MasterDrums.Model
         /// <summary>
         /// Random from green, blue and yellow
         /// </summary>
-        public override Image image {
+        public override Image Image {
             get
             {
                 Image im;
-                Random rnd = new Random();
-                int r = rnd.Next(0, 3);
 
-                if (r == 0)
-                    im = Resource.yellow;
-                else if (r == 1)
-                    im = Resource.blue;
+                if (this._image == null)
+                {
+                    Random rnd = new Random();
+                    int r = rnd.Next(0, 3);
+
+                    if (r == 0)
+                        im = Resource.yellow;
+                    else if (r == 1)
+                        im = Resource.blue;
+                    else
+                        im = Resource.green;
+
+                    this._image = im;
+                }
                 else
-                    im = Resource.green;
+                    im = this._image;
 
                 return im;
             }

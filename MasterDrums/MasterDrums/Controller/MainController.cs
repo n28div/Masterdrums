@@ -98,6 +98,14 @@ namespace MasterDrums.Controller
         }
 
         /// <summary>
+        /// Current bpm
+        /// </summary>
+        public int Bpm
+        {
+            get => this._currentBpm;
+        }
+
+        /// <summary>
         /// If the initial bpm, the player's name and the game mode has been set the game can start
         /// </summary>
         public bool GameReady
