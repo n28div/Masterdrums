@@ -3,7 +3,7 @@ using System.Runtime.Serialization;
 
 namespace MasterDrums.Model
 {
-    public class PauseNotePropertyExcpetion : Exception
+    public class PauseNotePropertyExcpetion : SystemException
     {
         /// <summary>
         /// Contructor method of the <c>PauseNotePropertyException</c> class.

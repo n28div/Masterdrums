@@ -34,5 +34,13 @@ namespace MasterDrums.Model
         /// Saves the score of the user in the .csv file
         /// </summary>
         void SerializeScore();
+
+        /// <summary>
+        /// Ms after which a note is considered as wasted
+        /// </summary>
+        int NoteWastedMs
+        {
+            get;
+        }
     }
 }

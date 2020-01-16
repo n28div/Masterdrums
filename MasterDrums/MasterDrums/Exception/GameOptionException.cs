@@ -3,7 +3,7 @@ using System.Runtime.Serialization;
 
 namespace MasterDrums.Model
 {
-    public class GameOptionException : Exception
+    public class GameOptionException : SystemException
     {
         /// <summary>
         /// Contructor method of the <c>InsertedNameException</c> class.

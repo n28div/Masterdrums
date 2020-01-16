@@ -131,11 +131,17 @@ namespace MasterDrums.View
 
         private void Confirm(object sender, EventArgs e)
         {
-            string name = this._txtUsername.Text;
-            int initialBpm = (int) this._txtInitialBpm.Value;
-            INoteGenerator gameMode = new RandomNoteGenerator();
-
-            this._mainView.StartGame(name, initialBpm, gameMode);
+            if (this._txtUsername.Text != "")
+            {
+                string name = this._txtUsername.Text;
+                int initialBpm = (int)this._txtInitialBpm.Value;
+                INoteGenerator gameMode = new RandomNoteGenerator();
+                this._mainView.StartGame(name, initialBpm, gameMode);
+            }
+            else
+            {
+                MessageBox.Show("E' necessario inserire il nome del giocatore per iniziare una partita!");
+            }
         }
     }
 }

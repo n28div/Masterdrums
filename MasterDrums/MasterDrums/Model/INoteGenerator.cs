@@ -75,7 +75,7 @@ namespace MasterDrums.Model
 
                     // to calculate the time needed to sleep we simply need to divide 60 (the seconds in 1 minute) by the bpm
                     // the time calculated is in seconds, so whe convert it into milliseconds
-                    int timeToSleep = (60 / this._bpm) * 1000;
+                    int timeToSleep = (60000 / this._bpm) / 2;
                     Thread.Sleep(timeToSleep);
                 }
             }

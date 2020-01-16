@@ -16,6 +16,16 @@ namespace MasterDrums.Controller
         void StopGame();
 
         /// <summary>
+        /// Pause the game
+        /// </summary>
+        void PauseGame();
+
+        /// <summary>
+        /// Resume the game
+        /// </summary>
+        void ResumeGame();
+
+        /// <summary>
         /// The main view reference, used to show notes
         /// </summary>
         IMainView MainView
@@ -60,13 +70,23 @@ namespace MasterDrums.Controller
         }
 
         /// <summary>
+        /// The user score
+        /// </summary>
+        int Score
+        {
+            get;
+        }
+
+        /// <summary>
         /// The user has hit a right note
         /// </summary>
-        void RightNoteHit();
+        /// <param name="hitNoteTimestamp">Timestamp when the note has been hitted</param>
+        void RightNoteHit(int hitNoteTimestamp);
 
         /// <summary>
         /// The user has hit a left note
         /// </summary>
-        void LeftNoteHit();
+        /// <param name="hitNoteTimestamp">Timestamp when the note has been hitted</param>
+        void LeftNoteHit(int hitNoteTimestamp);
     }
 }

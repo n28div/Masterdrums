@@ -7,12 +7,14 @@ using System.Drawing;
 
 namespace MasterDrums.View
 {
-    public class MainView: Form, IMainView
+    public class MainView : Form, IMainView
     {
         private IController _controller;
         private MainMenuPanel _mainMenuPanel;
         private NewGamePanel _newGamePanel;
         private PlayingPanel _playingPanel;
+        private GamePausePanel _gamePausePanel;
+        private Boolean _isRunning = false;
 
         /// <summary>
         /// Constructor that sets the controller to interact with the application model.
@@ -21,13 +23,14 @@ namespace MasterDrums.View
         public MainView(IController controller)
         {
             Application.EnableVisualStyles();
-            
+
             this._controller = controller;
             this._controller.MainView = this;
 
             this._mainMenuPanel = new MainMenuPanel(this);
             this._newGamePanel = new NewGamePanel(this);
             this._playingPanel = new PlayingPanel(this);
+            this._gamePausePanel = new GamePausePanel(this);
 
             this.KeyPreview = true;
             this.KeyUp += (s, e) =>
@@ -40,9 +43,12 @@ namespace MasterDrums.View
                     case Keys.N:
                         this.RightNoteHit();
                         break;
+
                     case Keys.Escape:
-                        this.Quit();
+                        if (this._isRunning)
+                            this.PauseGame();
                         break;
+
                 }
             };
 
@@ -74,6 +80,7 @@ namespace MasterDrums.View
             this.MainMenuPanelSetup();
             this.NewGamePanelSetup();
             this.PlayingPanelSetup();
+            this.GamePausePanelSetup();
         }
 
         /// <summary>
@@ -104,6 +111,21 @@ namespace MasterDrums.View
             this._newGamePanel.Location = new Point(panelX, panelY);
             this.Controls.Add(this._newGamePanel);
             this._newGamePanel.Hide();
+        }
+
+        /// <summary>
+        /// Sets up the game pause panel in the form and hides it
+        /// </summary>
+        private void GamePausePanelSetup()
+        {
+            int panelWidth = this.ClientSize.Width / 2;
+            int panelHeight = this.ClientSize.Height / 2;
+            int panelX = (this.ClientSize.Width / 2) - (panelWidth / 2);
+            int panelY = (this.ClientSize.Height / 2) - (panelHeight / 2);
+            this._gamePausePanel.Size = new Size(panelWidth, panelHeight);
+            this._gamePausePanel.Location = new Point(panelX, panelY);
+            this.Controls.Add(this._gamePausePanel);
+            this._gamePausePanel.Hide();
         }
 
         /// <summary>
@@ -141,6 +163,24 @@ namespace MasterDrums.View
         /// Shows the player name menu
         /// </summary>
         public void ShowNewGameView() => this._newGamePanel.Show();
+
+        /// <summary>
+        /// Shows the game pause menu
+        /// </summary>
+        public void ShowGamePauseView() {
+            this._gamePausePanel.Show();
+            this._gamePausePanel.BringToFront();
+        }
+
+        /// <summary>
+        /// Hide the game pause menu
+        /// </summary>
+        public void HideGamePauseView() => this._gamePausePanel.Hide();
+
+        /// <summary>
+        /// Hide the playing panel
+        /// </summary>
+        public void HidePlayingPanelView() => this._playingPanel.Hide();
 
         public void ShowCommandsView()
         {
@@ -184,7 +224,8 @@ namespace MasterDrums.View
 
         public void Highscores()
         {
-            throw new System.NotImplementedException();
+            //throw new System.NotImplementedException();
+            MessageBox.Show("Funzione non ancora implemenata.");
         }
 
         /// <summary>
@@ -192,12 +233,13 @@ namespace MasterDrums.View
         /// </summary>
         public void Quit()
         {
+            this._isRunning = false;
             this._controller.StopGame();
             Application.Exit();
         }
 
         /// <summary>
-        /// Hide all the panels and show tha gaming panel.
+        /// Hide all the panels and show the gaming panel.
         /// Communicate to the controller that the user wants to start the game
         /// </summary>
         /// <param name="playerName"></param>
@@ -205,6 +247,7 @@ namespace MasterDrums.View
         /// <param name="gameMode"></param>
         public void StartGame(string playerName, int initialBpm, INoteGenerator gameMode)
         {
+            this._isRunning = true;
             this.ClearView();
             this.ShowPlayingView();
 
@@ -216,11 +259,47 @@ namespace MasterDrums.View
         }
 
         /// <summary>
+        /// Show the pause panel.
+        /// Communicate to the controller that the user wants to pause the game
+        /// </summary>
+        public void PauseGame()
+        {
+            this.ShowGamePauseView();
+            this._controller.PauseGame();
+        }
+
+        /// <summary>
+        /// Hide the pause panel.
+        /// Communicate to the controller that the user wants to resume the game
+        /// </summary>
+        public void ResumeGame()
+        {
+            //this.ClearView();
+            this.HideGamePauseView();
+            this._controller.ResumeGame();
+        }
+
+        /// <summary>
+        /// Stop the current game and return to the initial menù.
+        /// Communicate to the controller that the user wants quit the current game
+        /// </summary>
+        public void StopGame()
+        {
+            this._isRunning = false;
+            this.HidePlayingPanelView();
+            this.HideGamePauseView();
+            this.ShowMainMenuView();
+            this._controller.StopGame();
+        }
+
+        /// <summary>
         /// Left note has been hit
         /// </summary>
         public void LeftNoteHit()
         {
             this._playingPanel.LeftNoteHit();
+            int ts = (int)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
+            this._controller.LeftNoteHit(ts);
         }
 
         /// <summary>
@@ -229,6 +308,8 @@ namespace MasterDrums.View
         public void RightNoteHit()
         {
             this._playingPanel.RightNoteHit();
+            int ts = (int)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
+            this._controller.RightNoteHit(ts);
         }
 
         /// <summary>
@@ -251,6 +332,27 @@ namespace MasterDrums.View
             // Invoke is needed cause the method is called from another thread.
             // Form control update is not permitted cross-thread!
             this.Invoke(new Action<INote>(this._playingPanel.LaunchRightNote), new object[] { note });
+        }
+
+        /// <summary>
+        /// Check if the user is playing a game
+        /// 
+        /// </summary>
+        public Boolean IsRunning
+        { 
+            get => this._isRunning;
+        }
+
+        public int RideTime {
+            get => (int)this._playingPanel.NoteRideTime;
+        }
+
+        /// <summary>
+        /// The game score
+        /// </summary>
+        public int GameScore
+        {
+            get => this._controller.Score;
         }
     }
 }

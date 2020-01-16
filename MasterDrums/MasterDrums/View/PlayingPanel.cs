@@ -14,7 +14,7 @@ namespace MasterDrums.View
     class PlayingPanel : Panel, IPanel, IPlayingView
     {
         private const int STICK_DOWN_MS = 50;
-        private const int REFRESH_RATE_MS = 1;
+        private const int REFRESH_RATE_MS = 20;
 
         private IMainView _mainView;
         private PictureBox _backgroundPictureBox;
@@ -77,6 +77,7 @@ namespace MasterDrums.View
 
             this.DrawSnare(e.Graphics);
             this.DrawNotes(e.Graphics);
+            this.DrawScore(e.Graphics);
 
             if (this._leftStickDown)
                 this.DrawLeftStickDown(e.Graphics);
@@ -95,16 +96,23 @@ namespace MasterDrums.View
         /// <param name="g">The graphics object where the image is drawed</param>
         private void DrawSnare(Graphics g)
         {
-            int snareWidth = (int)(this.Size.Width / 3);
+            int snareWidth = (int)Math.Round(this.Size.Width / 3.0);
             int snareHeight = snareWidth;
-            int snareX = (int)(this.Size.Width / 3);
-            int snareY = (int)(this.Size.Height * 0.6);
+            int snareX = (int)Math.Round(this.Size.Width / 3.0);
+            int snareY = (int)Math.Round(this.Size.Height * 0.6);
             Image snare = Resource.snare;
             g.DrawImage(snare, snareX, snareY, snareWidth, snareHeight);
 
             // draw right and left hit spot
-            g.DrawEllipse(new Pen(Color.LightGreen, 5F), this.LeftHitSpotX, this.HitSpotY, 20, 15);
-            g.DrawEllipse(new Pen(Color.LightGreen, 5F), this.RightHitSpotX, this.HitSpotY, 20, 15);
+            int ellipseHeight = (int)Math.Round(this.Size.Height * 0.05);
+            int ellipseWidth = (int)Math.Round(this.Size.Width * 0.05);
+
+            int leftEllipseX = (int)Math.Round(this.LeftHitSpotX - (double)(ellipseWidth / 2));
+            int rightEllipseX = (int)Math.Round(this.RightHitSpotX - (double)(ellipseWidth / 2));
+            int ellipseY = (int)Math.Round(this.HitSpotY - (double)(ellipseHeight / 2));
+
+            g.DrawEllipse(new Pen(Color.LightGreen, 5F), leftEllipseX, ellipseY, ellipseWidth, ellipseHeight);
+            g.DrawEllipse(new Pen(Color.LightGreen, 5F), rightEllipseX, ellipseY, ellipseWidth, ellipseHeight);
         }
 
         /// <summary>
@@ -137,10 +145,10 @@ namespace MasterDrums.View
         /// <param name="g">The graphics object where the image is drawed</param>
         private void DrawLeftStickUp(Graphics g)
         {
-            int w = (int)(this.Size.Width * 0.25);
+            int w = (int)Math.Round(this.Size.Width * 0.25);
             int h = w;
-            int y = (int)(this.Size.Height * 0.55);
-            int x = (int)((this.Size.Width * 0.30) - (w / 2));
+            int y = (int)Math.Round(this.Size.Height * 0.55);
+            int x = (int)Math.Round((this.Size.Width * 0.30) - (w / 2));
             
             Image leftStick = ImageUtils.RotateImage(Resource.left_stick, 30);
             g.DrawImage(leftStick, x, y, w, h);
@@ -152,10 +160,10 @@ namespace MasterDrums.View
         /// <param name="g">The graphics object where the image is drawed</param>
         private void DrawLeftStickDown(Graphics g)
         {
-            int w = (int)(this.Size.Width * 0.25);
+            int w = (int)Math.Round(this.Size.Width * 0.25);
             int h = w;
-            int y = (int)(this.Size.Height * 0.50);
-            int x = (int)((this.Size.Width * 0.45) - w);
+            int y = (int)Math.Round(this.Size.Height * 0.50);
+            int x = (int)Math.Round((this.Size.Width * 0.45) - w);
 
             Image leftStick = ImageUtils.RotateImage(Resource.left_stick, 100);
             g.DrawImage(leftStick, x, y, w, h);
@@ -167,10 +175,10 @@ namespace MasterDrums.View
         /// <param name="g">The graphics object where the image is drawed</param>
         private void DrawRightStickUp(Graphics g)
         {
-            int w = (int)(this.Size.Width * 0.25);
+            int w = (int)Math.Round(this.Size.Width * 0.25);
             int h = w;
-            int y = (int)(this.Size.Height * 0.55);
-            int x = (int)((this.Size.Width * 0.60));
+            int y = (int)Math.Round(this.Size.Height * 0.55);
+            int x = (int)Math.Round((this.Size.Width * 0.60));
 
             Image leftStick = ImageUtils.RotateImage(Resource.right_stick, -30);
             g.DrawImage(leftStick, x, y, w, h);
@@ -182,10 +190,10 @@ namespace MasterDrums.View
         /// <param name="g">The graphics object where the image is drawed</param>
         private void DrawRightStickDown(Graphics g)
         {
-            int w = (int)(this.Size.Width * 0.25);
+            int w = (int)Math.Round(this.Size.Width * 0.25);
             int h = w;
-            int y = (int)(this.Size.Height * 0.50);
-            int x = (int)((this.Size.Width * 0.55));
+            int y = (int)Math.Round(this.Size.Height * 0.50);
+            int x = (int)Math.Round((this.Size.Width * 0.55));
 
             Image leftStick = ImageUtils.RotateImage(Resource.right_stick, -100);
             g.DrawImage(leftStick, x, y, w, h);
@@ -205,11 +213,11 @@ namespace MasterDrums.View
                 Point curPoint = p.Item2;
 
                 // draw note
-                int noteSide = (int)(this.Width * 0.05);
+                int noteSide = (int)Math.Round(this.Width * 0.03);
                 if (note is SpecialNote)
                     noteSide *= 2;
-                
-                g.DrawImage(note.Image, curPoint.X, curPoint.Y, noteSide, noteSide);
+
+                g.DrawImage(note.Image, (curPoint.X - (noteSide / 2)), (curPoint.Y - (noteSide / 2)), noteSide, noteSide);
 
                 /*                  |\-----> angle
                  *                  | \
@@ -217,32 +225,38 @@ namespace MasterDrums.View
                  *                  |___\
                  *                     ^-- HitSpotX  
                  */
-                double diagonalSpace;
-                if (note.Position == INote.notePosition.Left)
-                    diagonalSpace = Math.Sqrt(Math.Pow(this.LeftHitSpotX, 2) + Math.Pow(this.HitSpotY, 2));
-                else
-                    diagonalSpace = Math.Sqrt(Math.Pow(this.RightHitSpotX, 2) + Math.Pow(this.HitSpotY, 2));
-
+                // calc hypo
+                double diagonalSpace = Math.Sqrt(Math.Pow(this.LeftHitSpotX, 2) + Math.Pow(this.HitSpotY, 2));
                 double angle = Math.Acos(this.HitSpotY / diagonalSpace);
-                
-                double speed = this.HitSpotY / ((60000 / this._bpm) / 16);
+                double speed = diagonalSpace / this.NoteRideTime;
 
-                double sy = speed * Math.Cos(angle);
-                double sx = speed * Math.Sin(angle);
+                double sy = REFRESH_RATE_MS * speed * Math.Cos(angle);
+                double sx = REFRESH_RATE_MS * speed * Math.Sin(angle);
 
                 int newX;
+                int newY = (int)Math.Round(curPoint.Y + sy);
                 if (note.Position == INote.notePosition.Left)
-                    newX = (int)Math.Ceiling(curPoint.X + sx);
+                    newX = (int)Math.Round(curPoint.X + sx);
                 else
-                    newX = (int)Math.Ceiling(curPoint.X - sx);
+                    newX = (int)Math.Round(curPoint.X - sx);
 
-                int newY = (int)Math.Ceiling(curPoint.Y + sy);
+                
                 Point newPoint = new Point(newX, newY);
                 p.Item2 = newPoint;
-
-                if (newPoint.Y > this.HitSpotY)
+                if (newPoint.Y > this.HitSpotY + this.Size.Height)
                     this._screenNotes.Remove(p);
             }
+        }
+
+        /// <summary>
+        /// Draw the score on the screen
+        /// </summary>
+        /// <param name="g">The graphic object where the drawing is performed</param>
+        private void DrawScore(Graphics g)
+        {
+            int scoreX = (int)Math.Round(this.Size.Width / 2.0);
+            int scoreY = (int)Math.Round(this.Size.Height * 0.1);
+            g.DrawString(this._mainView.GameScore.ToString(), new Font("Comic Sans MS", 16), new SolidBrush(Color.Black), new Point(scoreX, scoreY));
         }
 
         /// <summary>
@@ -250,9 +264,12 @@ namespace MasterDrums.View
         /// </summary>
         public float NoteRideTime
         {
-            get => 0;
+            get => ((60000 / this._bpm) / 2);
         }
 
+        /// <summary>
+        /// Current bpm playing rate
+        /// </summary>
         public int Bpm
         {
             set => this._bpm = value;
@@ -321,8 +338,11 @@ namespace MasterDrums.View
         /// </summary>
         private void PlayHitSound()
         {
-            this._outputDevice.Play();
-            this._audio.Position = 0;
+            if (this._mainView.IsRunning)
+            {
+                this._outputDevice.Play();
+                this._audio.Position = 0;
+            }
         }
     }
 }

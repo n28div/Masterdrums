@@ -1,4 +1,5 @@
 ﻿using MasterDrums.Model;
+using System;
 
 namespace MasterDrums.View
 {
@@ -29,6 +30,47 @@ namespace MasterDrums.View
         /// Starts a new game
         /// </summary>
         void StartGame(string playerName, int initialBpm, INoteGenerator gameMode);
+
+        /// <summary>
+        /// Pause the game
+        /// </summary>
+        void PauseGame();
+
+        /// <summary>
+        /// Resume the game
+        /// </summary>
+        void ResumeGame();
+
+        /// <summary>
+        /// Stop the current game.
+        /// </summary>
+        void StopGame();
+
+        /// <summary>
+        /// Time required for a note to reach the hit point
+        /// </summary>
+        /// <returns>The timestamp</returns>
+        int RideTime {
+            get;
+        }
+
+        /// <summary>
+        /// Check if the user is playing a game
+        /// </summary>
+        /// <returns>Boolean that inicates if the user is playng a game or not</returns>
+        Boolean IsRunning {
+            get;
+        }
+
+        /// <summary>
+        /// The game score
+        /// </summary>
+        int GameScore
+        {
+            get;
+        }
+
+
         #endregion
 
         #region Game panel

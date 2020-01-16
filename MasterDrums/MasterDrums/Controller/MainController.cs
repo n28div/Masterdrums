@@ -1,6 +1,10 @@
 ﻿using MasterDrums.Model;
 using MasterDrums.View;
 using MasterDrums.Utils;
+using System.Collections.Generic;
+using System;
+using System.Windows.Forms;
+using MasterDrums.Exception;
 
 namespace MasterDrums.Controller
 {
@@ -9,10 +13,13 @@ namespace MasterDrums.Controller
     /// </summary>
     public class MainController : IController, IObserver
     {
+        private Game _game;
+
         private int _initialBpm = -1;
-        private int _currentBpm = -1;
         private string _playerName = null;
         private INoteGenerator _noteGenerator = null;
+        private Queue<Pair<INote, int>> _generatedNotes;
+        private System.Threading.Mutex _generatedNotesMutex;
         private IMainView _mainView = null;
         
         /// <summary>
@@ -20,16 +27,43 @@ namespace MasterDrums.Controller
         /// </summary>
         public void StartGame()
         {
+            this._generatedNotesMutex = new System.Threading.Mutex();
+
             if (this._initialBpm == -1 && this._playerName == null && this._noteGenerator == null)
-                throw new GameOptionException("Game options not sets");
+                throw new GameOptionException("Game options not set");
 
             // start generating the notes
+            this._generatedNotes = new Queue<Pair<INote, int>>();
             this._noteGenerator.Attach(this);
             this._noteGenerator.Bpm = this._initialBpm;
             this._noteGenerator.Start();
 
-            // TODO: start increasing bpm
+            this._game = new Game(this._initialBpm);
+            this._game.PlayerName = this._playerName;
+
+            // a timer is created to remove non hitted notes
+            Timer nonHittedTimer = new Timer();
+            nonHittedTimer.Interval = 50;
+            nonHittedTimer.Tick += NonHittedTimer_Tick;
+            nonHittedTimer.Start();
         }
+
+        private void NonHittedTimer_Tick(object sender, EventArgs e)
+        {
+            this._generatedNotesMutex.WaitOne();
+            if (this._generatedNotes.Count > 0)
+            {
+                Pair<INote, int> topPair = this._generatedNotes.Peek();
+                int timestamp = (int)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
+
+                if (timestamp < (topPair.Item2 + this._mainView.RideTime + this._game.NoteWastedMs - 300000))
+                {
+                    this._generatedNotes.Dequeue();
+                }
+            }
+            this._generatedNotesMutex.ReleaseMutex();
+        }
+        
 
         /// <summary>
         /// Called when the note generator generates a note.
@@ -40,8 +74,14 @@ namespace MasterDrums.Controller
             INoteGenerator gen = (INoteGenerator)subj;
             INote generatedNote = gen.CurrentNote;
 
+            int timestamp = (int)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
+
             if (!(generatedNote is PauseNote))
             {
+                this._generatedNotesMutex.WaitOne();
+                this._generatedNotes.Enqueue(new Pair<INote, int>(generatedNote, timestamp));
+                this._generatedNotesMutex.ReleaseMutex();
+
                 if (generatedNote.Position == INote.notePosition.Left)
                 {
                     this._mainView.LaunchLeftNote(generatedNote);
@@ -64,14 +104,88 @@ namespace MasterDrums.Controller
             // TODO
         }
 
-        public void RightNoteHit()
+        /// <summary>
+        /// Pause generating notes and increasing bpms.
+        /// </summary>
+        public void PauseGame()
         {
-            throw new System.NotImplementedException();
+            // pause generating notes
+            this._noteGenerator.Pause();
+            // TODO
         }
 
-        public void LeftNoteHit()
+        /// <summary>
+        /// Resume generating notes and increasing bpms.
+        /// </summary>
+        public void ResumeGame()
         {
-            throw new System.NotImplementedException();
+            // resume generating notes
+            this._noteGenerator.Resume();
+            // TODO
+        }
+
+        /// <summary>
+        /// Method called when the right note was hitted
+        /// </summary>
+        /// <param name="ts">Timestamp when the note was hitted</param>
+        public void RightNoteHit(int ts)
+        {
+            this._generatedNotesMutex.WaitOne();
+            try
+            {
+                Pair<INote, int> pair = this._generatedNotes.Peek();
+
+                if (pair.Item1.Position == INote.notePosition.Right)
+                {
+                    this._generatedNotes.Dequeue();
+                    int delay = Math.Abs(ts - pair.Item2);
+                    this._game.Hit(pair.Item1, delay);
+                }
+            }
+            catch (GameEndedException e)
+            {
+                MessageBox.Show("O FRA sono dsA");
+            }
+            catch
+            {
+
+            }
+            finally
+            {
+                this._generatedNotesMutex.ReleaseMutex();
+            }
+        }
+
+        /// <summary>
+        /// Method called when the left note was hitted
+        /// </summary>
+        /// <param name="ts">Timestamp when the note was hitted</param>
+        public void LeftNoteHit(int ts)
+        {
+            this._generatedNotesMutex.WaitOne();
+            try
+            {
+                Pair<INote, int> pair = this._generatedNotes.Peek();
+
+                if (pair.Item1.Position == INote.notePosition.Left)
+                {
+                    this._generatedNotes.Dequeue();
+                    int delay = Math.Abs(ts - pair.Item2);
+                    this._game.Hit(pair.Item1, delay);
+                }
+            }
+            catch (GameEndedException e)
+            {
+                MessageBox.Show("O FRA sono dsA");
+            }
+            catch
+            {
+
+            }
+            finally
+            {
+                this._generatedNotesMutex.ReleaseMutex();
+            }
         }
 
         /// <summary>
@@ -91,7 +205,6 @@ namespace MasterDrums.Controller
             set
             {
                 this._initialBpm = value;
-                this._currentBpm = this._initialBpm;
             }
 
             get => this._initialBpm;
@@ -102,7 +215,7 @@ namespace MasterDrums.Controller
         /// </summary>
         public int Bpm
         {
-            get => this._currentBpm;
+            get => this._game.Bpm;
         }
 
         /// <summary>
@@ -128,6 +241,14 @@ namespace MasterDrums.Controller
         {
             get => this._mainView;
             set => this._mainView = value;
+        }
+
+        /// <summary>
+        /// The user score
+        /// </summary>
+        public int Score
+        {
+            get => this._game.Score;
         }
     }
 }
