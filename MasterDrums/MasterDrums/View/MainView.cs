@@ -214,6 +214,15 @@ namespace MasterDrums.View
         #endregion
 
         /// <summary>
+        /// Shows the main menu panel
+        /// </summary>
+        public void MainMenu()
+        {
+            this.ClearView();
+            this.ShowMainMenuView();
+        }
+
+        /// <summary>
         /// Called when the user clicks on the new game button in the main menu panel.
         /// Shows the new game panel which will ask the user to insert his name, initial bpm and game mode.
         /// </summary>

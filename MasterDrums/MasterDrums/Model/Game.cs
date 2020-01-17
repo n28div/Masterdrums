@@ -59,7 +59,7 @@ namespace MasterDrums.Model
 
         public void SerializeScore()
         {
-            throw new System.NotImplementedException();
+            // throw new System.NotImplementedException();
         }
 
         

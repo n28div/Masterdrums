@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using MasterDrums.Model;
 using MasterDrums.Utils;
 using MasterDrums.Controller;
+using MasterDrums.Exception;
 using NAudio.Wave;
 
 namespace MasterDrums.View
@@ -338,7 +339,7 @@ namespace MasterDrums.View
         {
             int scoreX = (int)Math.Round(this.Size.Width / 2.0);
             int scoreY = (int)Math.Round(this.Size.Height * 0.1);
-            g.DrawString(this._controller.Score.ToString(), new Font("Arial", 16), new SolidBrush(Color.Black), new Point(scoreX, scoreY));
+            g.DrawString(this._controller.Score.ToString(), new Font("Arial", 25), new SolidBrush(Color.Black), new Point(scoreX, scoreY));
         }
 
         /// <summary>
@@ -410,21 +411,28 @@ namespace MasterDrums.View
             try
             {
                 this._notesMutex.WaitOne();
-                Triplet<INote, Point, int> bottomNote = this._notes.First.Value;
 
-                if (bottomNote.Item1.Position == position && 
-                    Math.Abs(bottomNote.Item2.Y - this.HitSpotY) < this.WastedDistance)
-                {
-                    int timestamp = (int)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
-                    int hitDelay = Math.Abs(timestamp - bottomNote.Item3);
-                    this._controller.NoteHitted(bottomNote.Item1, hitDelay);
-                    this._notes.RemoveFirst();
-                }
-                else
+                if (this._notes.Count == 0)
                     this._controller.EmptyHit();
-            } catch
+                else
+                {
+                    Triplet<INote, Point, int> bottomNote = this._notes.First.Value;
+
+                    if (bottomNote.Item1.Position == position &&
+                        Math.Abs(bottomNote.Item2.Y - this.HitSpotY) < this.WastedDistance)
+                    {
+                        int timestamp = (int)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
+                        int hitDelay = Math.Abs(timestamp - bottomNote.Item3);
+                        this._controller.NoteHitted(bottomNote.Item1, hitDelay);
+                        this._notes.RemoveFirst();
+                    }
+                    else
+                        this._controller.EmptyHit();
+                }
+            } catch (GameEndedException)
             {
-                this._controller.EmptyHit();
+                MessageBox.Show("La tua partita termina qui. Il tuo punteggio è di " + this._controller.Score.ToString());
+                this.StopGame();
             }
             finally
             {
@@ -491,6 +499,7 @@ namespace MasterDrums.View
             this._isRunning = false;
             this._noteGenerator.Stop();
             this._controller.StopGame();
+            this._mainView.MainMenu();
         }
     }
 }

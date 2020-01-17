@@ -10,6 +10,11 @@ namespace MasterDrums.View
     {
         #region Main menu panel
         /// <summary>
+        /// Shows the main menu panel
+        /// </summary>
+        void MainMenu();
+
+        /// <summary>
         /// Shows the new game panel
         /// </summary>
         void NewGame();
