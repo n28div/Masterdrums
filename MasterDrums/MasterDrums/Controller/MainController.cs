@@ -11,15 +11,12 @@ namespace MasterDrums.Controller
     /// <summary>
     /// Entry point of the game, each controller, view and model is managed through this class.
     /// </summary>
-    public class MainController : IController, IObserver
+    public class MainController : IController
     {
         private Game _game;
 
         private int _initialBpm = -1;
         private string _playerName = null;
-        private INoteGenerator _noteGenerator = null;
-        private Queue<Pair<INote, int>> _generatedNotes;
-        private System.Threading.Mutex _generatedNotesMutex;
         private IMainView _mainView = null;
         
         /// <summary>
@@ -27,70 +24,11 @@ namespace MasterDrums.Controller
         /// </summary>
         public void StartGame()
         {
-            this._generatedNotesMutex = new System.Threading.Mutex();
-
-            if (this._initialBpm == -1 && this._playerName == null && this._noteGenerator == null)
+            if (this._initialBpm == -1 && this._playerName == null)
                 throw new GameOptionException("Game options not set");
-
-            // start generating the notes
-            this._generatedNotes = new Queue<Pair<INote, int>>();
-            this._noteGenerator.Attach(this);
-            this._noteGenerator.Bpm = this._initialBpm;
-            this._noteGenerator.Start();
 
             this._game = new Game(this._initialBpm);
             this._game.PlayerName = this._playerName;
-
-            // a timer is created to remove non hitted notes
-            Timer nonHittedTimer = new Timer();
-            nonHittedTimer.Interval = 50;
-            nonHittedTimer.Tick += NonHittedTimer_Tick;
-            nonHittedTimer.Start();
-        }
-
-        private void NonHittedTimer_Tick(object sender, EventArgs e)
-        {
-            this._generatedNotesMutex.WaitOne();
-            if (this._generatedNotes.Count > 0)
-            {
-                Pair<INote, int> topPair = this._generatedNotes.Peek();
-                int timestamp = (int)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
-
-                if (timestamp < (topPair.Item2 + this._mainView.RideTime + this._game.NoteWastedMs - 300000))
-                {
-                    this._generatedNotes.Dequeue();
-                }
-            }
-            this._generatedNotesMutex.ReleaseMutex();
-        }
-        
-
-        /// <summary>
-        /// Called when the note generator generates a note.
-        /// </summary>
-        /// <param name="subj">The note generator instance</param>
-        public void Update(ISubject subj)
-        {
-            INoteGenerator gen = (INoteGenerator)subj;
-            INote generatedNote = gen.CurrentNote;
-
-            int timestamp = (int)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
-
-            if (!(generatedNote is PauseNote))
-            {
-                this._generatedNotesMutex.WaitOne();
-                this._generatedNotes.Enqueue(new Pair<INote, int>(generatedNote, timestamp));
-                this._generatedNotesMutex.ReleaseMutex();
-
-                if (generatedNote.Position == INote.notePosition.Left)
-                {
-                    this._mainView.LaunchLeftNote(generatedNote);
-                }
-                else
-                {
-                    this._mainView.LaunchRightNote(generatedNote);
-              }
-            }
         }
 
         /// <summary>
@@ -98,94 +36,25 @@ namespace MasterDrums.Controller
         /// Saves the player's score.
         /// </summary>
         public void StopGame() {
-            // stop generating notes
-            this._noteGenerator.Stop();
-            // stop increasing bpms
-            // TODO
+            this._game.SerializeScore();
         }
 
         /// <summary>
-        /// Pause generating notes and increasing bpms.
+        /// Communicate to the game model that a note has been hitted
         /// </summary>
-        public void PauseGame()
+        /// <param name="note">The note hitted</param>
+        /// <param name="delay">Delay from the perfect time</param>
+        public void NoteHitted(INote note, int delay)
         {
-            // pause generating notes
-            this._noteGenerator.Pause();
-            // TODO
+            this._game.Hit(note, delay);
         }
 
         /// <summary>
-        /// Resume generating notes and increasing bpms.
+        /// Called when an empty hit is performed
         /// </summary>
-        public void ResumeGame()
+        public void EmptyHit()
         {
-            // resume generating notes
-            this._noteGenerator.Resume();
-            // TODO
-        }
-
-        /// <summary>
-        /// Method called when the right note was hitted
-        /// </summary>
-        /// <param name="ts">Timestamp when the note was hitted</param>
-        public void RightNoteHit(int ts)
-        {
-            this._generatedNotesMutex.WaitOne();
-            try
-            {
-                Pair<INote, int> pair = this._generatedNotes.Peek();
-
-                if (pair.Item1.Position == INote.notePosition.Right)
-                {
-                    this._generatedNotes.Dequeue();
-                    int delay = Math.Abs(ts - pair.Item2);
-                    this._game.Hit(pair.Item1, delay);
-                }
-            }
-            catch (GameEndedException e)
-            {
-                MessageBox.Show("O FRA sono dsA");
-            }
-            catch
-            {
-
-            }
-            finally
-            {
-                this._generatedNotesMutex.ReleaseMutex();
-            }
-        }
-
-        /// <summary>
-        /// Method called when the left note was hitted
-        /// </summary>
-        /// <param name="ts">Timestamp when the note was hitted</param>
-        public void LeftNoteHit(int ts)
-        {
-            this._generatedNotesMutex.WaitOne();
-            try
-            {
-                Pair<INote, int> pair = this._generatedNotes.Peek();
-
-                if (pair.Item1.Position == INote.notePosition.Left)
-                {
-                    this._generatedNotes.Dequeue();
-                    int delay = Math.Abs(ts - pair.Item2);
-                    this._game.Hit(pair.Item1, delay);
-                }
-            }
-            catch (GameEndedException e)
-            {
-                MessageBox.Show("O FRA sono dsA");
-            }
-            catch
-            {
-
-            }
-            finally
-            {
-                this._generatedNotesMutex.ReleaseMutex();
-            }
+            this._game.Hit();
         }
 
         /// <summary>
@@ -219,22 +88,6 @@ namespace MasterDrums.Controller
         }
 
         /// <summary>
-        /// If the initial bpm, the player's name and the game mode has been set the game can start
-        /// </summary>
-        public bool GameReady
-        {
-            get => (this._playerName != null) && (this._initialBpm != -1) && (this._noteGenerator == null);
-        }
-
-        /// <summary>
-        /// Sets the game mode
-        /// </summary>
-        public INoteGenerator GameMode {
-            get => this._noteGenerator;
-            set => this._noteGenerator = value;
-        }
-
-        /// <summary>
         /// Main view instance
         /// </summary>
         public IMainView MainView
@@ -249,6 +102,14 @@ namespace MasterDrums.Controller
         public int Score
         {
             get => this._game.Score;
+        }
+
+        /// <summary>
+        /// Time after or before which an hit is considered as wasted
+        /// </summary>
+        public int HittedNoteInterval
+        {
+            get => this._game.NoteWastedMs;
         }
     }
 }

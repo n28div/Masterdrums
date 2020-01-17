@@ -31,6 +31,11 @@ namespace MasterDrums.Model
         void Hit(INote note, double deltaT);
 
         /// <summary>
+        /// Called when an empty hit is performed
+        /// </summary>
+        void Hit();
+
+        /// <summary>
         /// Saves the score of the user in the .csv file
         /// </summary>
         void SerializeScore();

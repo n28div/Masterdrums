@@ -16,16 +16,6 @@ namespace MasterDrums.Controller
         void StopGame();
 
         /// <summary>
-        /// Pause the game
-        /// </summary>
-        void PauseGame();
-
-        /// <summary>
-        /// Resume the game
-        /// </summary>
-        void ResumeGame();
-
-        /// <summary>
         /// The main view reference, used to show notes
         /// </summary>
         IMainView MainView
@@ -61,16 +51,7 @@ namespace MasterDrums.Controller
         }
 
         /// <summary>
-        /// The game mode is determined by the it instance.
-        /// </summary>
-        INoteGenerator GameMode
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// The user score
+        /// The players score
         /// </summary>
         int Score
         {
@@ -78,15 +59,23 @@ namespace MasterDrums.Controller
         }
 
         /// <summary>
-        /// The user has hit a right note
+        /// A note has been hitted by the user
         /// </summary>
-        /// <param name="hitNoteTimestamp">Timestamp when the note has been hitted</param>
-        void RightNoteHit(int hitNoteTimestamp);
+        /// <param name="note">The note hitted by the user</param>
+        /// <param name="delay">The in ms from the perfect hit time</param>
+        void NoteHitted(INote note, int delay);
 
         /// <summary>
-        /// The user has hit a left note
+        /// Called when an empty hit is performed
         /// </summary>
-        /// <param name="hitNoteTimestamp">Timestamp when the note has been hitted</param>
-        void LeftNoteHit(int hitNoteTimestamp);
+        void EmptyHit();
+
+        /// <summary>
+        /// Distance in ms from perfect note hit time in order to consider a note as hittable
+        /// </summary>
+        int HittedNoteInterval
+        {
+            get;
+        }
     }
 }

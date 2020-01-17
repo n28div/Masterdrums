@@ -16,27 +16,41 @@ namespace MasterDrums.View
         }
 
         /// <summary>
-        /// Launch a left note on the screen and takes care of signaling when the note has been hit
-        /// and how much delay there was between the hit and the estimed perfect hit
-        /// </summary>
-        /// <param name="note">The note that will be launched</param>
-        void LaunchLeftNote(INote note);
-
-        /// <summary>
         /// Method called when a left note is hitted.
         /// </summary>
         void LeftNoteHit();
 
         /// <summary>
-        /// Launch a right note on the screen and takes care of signaling when the note has been hit
-        /// and how much delay there was between the hit and the estimed perfect hit
-        /// </summary>
-        /// <param name="note">The note that will be launched</param>
-        void LaunchRightNote(INote note);
-
-        /// <summary>
         /// Method called when a right note is hitted.
         /// </summary>
         void RightNoteHit();
+
+        /// <summary>
+        /// Starts the game
+        /// </summary>
+        void StartGame();
+
+        /// <summary>
+        /// Stops the game
+        /// </summary>
+        void StopGame();
+
+        /// <summary>
+        /// Puts the note generator in pause
+        /// </summary>
+        void PauseGame();
+
+        /// <summary>
+        /// Resumes the game from pause
+        /// </summary>
+        void ResumeGame();
+
+        /// <summary>
+        /// States if the game is running or not
+        /// </summary>
+        bool IsRunning
+        {
+            get;
+        }
     }
 }

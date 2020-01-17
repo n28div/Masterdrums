@@ -14,7 +14,6 @@ namespace MasterDrums.View
         private NewGamePanel _newGamePanel;
         private PlayingPanel _playingPanel;
         private GamePausePanel _gamePausePanel;
-        private Boolean _isRunning = false;
 
         /// <summary>
         /// Constructor that sets the controller to interact with the application model.
@@ -29,7 +28,7 @@ namespace MasterDrums.View
 
             this._mainMenuPanel = new MainMenuPanel(this);
             this._newGamePanel = new NewGamePanel(this);
-            this._playingPanel = new PlayingPanel(this);
+            this._playingPanel = new PlayingPanel(this, this._controller);
             this._gamePausePanel = new GamePausePanel(this);
 
             this.KeyPreview = true;
@@ -38,14 +37,16 @@ namespace MasterDrums.View
                 switch (e.KeyCode)
                 {
                     case Keys.C:
-                        this.LeftNoteHit();
+                        if (this._playingPanel.IsRunning)
+                            this.LeftNoteHit();
                         break;
                     case Keys.N:
-                        this.RightNoteHit();
+                        if (this._playingPanel.IsRunning)
+                            this.RightNoteHit();
                         break;
 
                     case Keys.Escape:
-                        if (this._isRunning)
+                        if (this._playingPanel.IsRunning)
                             this.PauseGame();
                         break;
 
@@ -233,7 +234,6 @@ namespace MasterDrums.View
         /// </summary>
         public void Quit()
         {
-            this._isRunning = false;
             this._controller.StopGame();
             Application.Exit();
         }
@@ -247,36 +247,34 @@ namespace MasterDrums.View
         /// <param name="gameMode"></param>
         public void StartGame(string playerName, int initialBpm, INoteGenerator gameMode)
         {
-            this._isRunning = true;
             this.ClearView();
             this.ShowPlayingView();
 
             this._controller.PlayerName = playerName;
             this._controller.InitialBpm = initialBpm;
-            this._controller.GameMode = gameMode;
 
-            this._controller.StartGame();
+            this._playingPanel.StartGame();
         }
 
         /// <summary>
         /// Show the pause panel.
-        /// Communicate to the controller that the user wants to pause the game
+        /// Communicate to the playing panel that the user wants to pause the game
         /// </summary>
         public void PauseGame()
         {
             this.ShowGamePauseView();
-            this._controller.PauseGame();
+            this._playingPanel.PauseGame();
         }
 
         /// <summary>
         /// Hide the pause panel.
-        /// Communicate to the controller that the user wants to resume the game
+        /// Communicate to the playing panel that the user wants to resume the game
         /// </summary>
         public void ResumeGame()
         {
-            //this.ClearView();
+            this.ClearView();
             this.HideGamePauseView();
-            this._controller.ResumeGame();
+            this._playingPanel.ResumeGame();
         }
 
         /// <summary>
@@ -285,11 +283,10 @@ namespace MasterDrums.View
         /// </summary>
         public void StopGame()
         {
-            this._isRunning = false;
             this.HidePlayingPanelView();
             this.HideGamePauseView();
             this.ShowMainMenuView();
-            this._controller.StopGame();
+            this._playingPanel.StopGame();
         }
 
         /// <summary>
@@ -298,8 +295,6 @@ namespace MasterDrums.View
         public void LeftNoteHit()
         {
             this._playingPanel.LeftNoteHit();
-            int ts = (int)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
-            this._controller.LeftNoteHit(ts);
         }
 
         /// <summary>
@@ -308,51 +303,6 @@ namespace MasterDrums.View
         public void RightNoteHit()
         {
             this._playingPanel.RightNoteHit();
-            int ts = (int)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
-            this._controller.RightNoteHit(ts);
-        }
-
-        /// <summary>
-        /// Show a left note on the screen.
-        /// </summary>
-        public void LaunchLeftNote(INote note)
-        {
-            this._playingPanel.Bpm = this._controller.Bpm;
-            // Invoke is needed cause the method is called from another thread.
-            // Form control update is not permitted cross-thread! 
-            this.Invoke(new Action<INote>(this._playingPanel.LaunchLeftNote), new object[] { note });
-        }
-
-        /// <summary>
-        /// Show a right note on the screen.
-        /// </summary>
-        public void LaunchRightNote(INote note)
-        {
-            this._playingPanel.Bpm = this._controller.Bpm;
-            // Invoke is needed cause the method is called from another thread.
-            // Form control update is not permitted cross-thread!
-            this.Invoke(new Action<INote>(this._playingPanel.LaunchRightNote), new object[] { note });
-        }
-
-        /// <summary>
-        /// Check if the user is playing a game
-        /// 
-        /// </summary>
-        public Boolean IsRunning
-        { 
-            get => this._isRunning;
-        }
-
-        public int RideTime {
-            get => (int)this._playingPanel.NoteRideTime;
-        }
-
-        /// <summary>
-        /// The game score
-        /// </summary>
-        public int GameScore
-        {
-            get => this._controller.Score;
         }
     }
 }

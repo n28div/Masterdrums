@@ -4,6 +4,7 @@ using System.Windows.Forms;
 using System.Collections.Generic;
 using MasterDrums.Model;
 using MasterDrums.Utils;
+using MasterDrums.Controller;
 using NAudio.Wave;
 
 namespace MasterDrums.View
@@ -11,12 +12,18 @@ namespace MasterDrums.View
     /// <summary>
     /// 
     /// </summary>
-    class PlayingPanel : Panel, IPanel, IPlayingView
+    class PlayingPanel : Panel, IPlayingView, IPanel, IObserver
     {
         private const int STICK_DOWN_MS = 50;
         private const int REFRESH_RATE_MS = 20;
 
         private IMainView _mainView;
+        private IController _controller;
+
+        private INoteGenerator _noteGenerator;
+        private Timer _gameLoopTimer;
+        private bool _isRunning;
+
         private PictureBox _backgroundPictureBox;
 
         private bool _leftStickDown = false;
@@ -24,22 +31,72 @@ namespace MasterDrums.View
         private WaveOutEvent _outputDevice;
         private WaveFileReader _audio;
 
-        private List<Pair<INote, Point>> _screenNotes;
-        private int _bpm;
+        private System.Threading.Mutex _notesMutex;
+        private LinkedList<Triplet<INote, Point, int>> _notes;
         
-        public PlayingPanel(IMainView mainView)
+        /// <summary>
+        /// Constructor method
+        /// </summary>
+        /// <param name="mainView">The main view instance that created the panel</param>
+        /// <param name="controller">The controller instance used to communicate with the model</param>
+        public PlayingPanel(IMainView mainView, IController controller)
         {
             this._mainView = mainView;
+            this._controller = controller;
 
-            this._screenNotes = new List<Pair<INote, Point>>();
-            
+            // create the note generator and subscribe as listener
+            this._noteGenerator = new RandomNoteGenerator();
+            this._noteGenerator.Attach(this);
+            this._isRunning = false;
+
+            // the queue containg the notes viewed by the user
+            this._notes = new LinkedList<Triplet<INote, Point, int>>();
+            this._notesMutex = new System.Threading.Mutex();
+
+            // the game loop timer takes care of drawing the required objects in the panel's main picture box
+            this._gameLoopTimer = new Timer();
+            _gameLoopTimer.Interval = REFRESH_RATE_MS;
+
+            // the output sound configuration using NAudio lib
             this._outputDevice = new WaveOutEvent();
             this._audio = new WaveFileReader(Resource.snare_hit);
             this._outputDevice.Init(this._audio);
         }
 
         /// <summary>
-        /// Draw the snare and the sticks
+        /// Called by the notegenerator when a new note has been generated
+        /// Thread safe
+        /// </summary>
+        /// <param name="ng">The note generator instance</param>
+        public void Update(ISubject ng)
+        {
+            try
+            {
+                this._notesMutex.WaitOne();
+
+                INote note = this._noteGenerator.CurrentNote;
+
+                if (!(note is PauseNote))
+                {
+                    int timestamp = (int)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
+
+                    Point point;
+                    if (note.Position == INote.notePosition.Left)
+                        point = new Point(0, 0);
+                    else
+                        point = new Point(this.Size.Width, 0);
+
+                    this._notes.AddLast(new Triplet<INote, Point, int>(note, point, timestamp));
+                }
+            }
+            finally
+            {
+                this._notesMutex.ReleaseMutex();
+            }
+        }
+
+        /// <summary>
+        /// Draw the backgroung main picture box and setup the game loop to update it
         /// </summary>
         public void Draw()
         {
@@ -52,11 +109,7 @@ namespace MasterDrums.View
             this._backgroundPictureBox.Location = new Point(0, 0);
 
             this._backgroundPictureBox.Paint += this.PaintObjects;
-            // Timer to draw continously the view
-            Timer drawTimer = new Timer();
-            drawTimer.Interval = REFRESH_RATE_MS;
-            drawTimer.Tick += (s, e) => this._backgroundPictureBox.Invalidate();
-            drawTimer.Start();
+            this._gameLoopTimer.Tick += (s, e) => this._backgroundPictureBox.Invalidate();
 
             this.Controls.Add(this._backgroundPictureBox);
             this.ResumeLayout();
@@ -66,13 +119,7 @@ namespace MasterDrums.View
         /// Draw the object composing the game scene
         /// </summary>
         private void PaintObjects(object sender, PaintEventArgs e)
-        {       
-            /*
-            this._msSiceLast += REFRESH_RATE_MS;
-            if (((this._bpm / 60) * 1000) < this._msSiceLast)
-                this._msSiceLast = 0;
-            */
-
+        {
             e.Graphics.Clear(Color.White);
 
             this.DrawSnare(e.Graphics);
@@ -96,20 +143,19 @@ namespace MasterDrums.View
         /// <param name="g">The graphics object where the image is drawed</param>
         private void DrawSnare(Graphics g)
         {
-            int snareWidth = (int)Math.Round(this.Size.Width / 3.0);
-            int snareHeight = snareWidth;
+            int snareSide = (int)Math.Round(this.Size.Width / 3.0);
             int snareX = (int)Math.Round(this.Size.Width / 3.0);
             int snareY = (int)Math.Round(this.Size.Height * 0.6);
             Image snare = Resource.snare;
-            g.DrawImage(snare, snareX, snareY, snareWidth, snareHeight);
+            g.DrawImage(snare, snareX, snareY, snareSide, snareSide);
 
             // draw right and left hit spot
             int ellipseHeight = (int)Math.Round(this.Size.Height * 0.05);
             int ellipseWidth = (int)Math.Round(this.Size.Width * 0.05);
 
-            int leftEllipseX = (int)Math.Round(this.LeftHitSpotX - (double)(ellipseWidth / 2));
-            int rightEllipseX = (int)Math.Round(this.RightHitSpotX - (double)(ellipseWidth / 2));
-            int ellipseY = (int)Math.Round(this.HitSpotY - (double)(ellipseHeight / 2));
+            int leftEllipseX = (int)Math.Round(this.LeftHitSpotX - (ellipseWidth / 2.0));
+            int rightEllipseX = (int)Math.Round(this.RightHitSpotX - (ellipseWidth / 2.0));
+            int ellipseY = (int)Math.Round(this.HitSpotY - (ellipseHeight / 2.0));
 
             g.DrawEllipse(new Pen(Color.LightGreen, 5F), leftEllipseX, ellipseY, ellipseWidth, ellipseHeight);
             g.DrawEllipse(new Pen(Color.LightGreen, 5F), rightEllipseX, ellipseY, ellipseWidth, ellipseHeight);
@@ -120,7 +166,7 @@ namespace MasterDrums.View
         /// </summary>
         private int HitSpotY
         {
-            get => (int)(this.Size.Height * 0.75);
+            get => (int)Math.Round(this.Size.Height * 0.75);
         }
 
         /// <summary>
@@ -128,7 +174,12 @@ namespace MasterDrums.View
         /// </summary>
         private int LeftHitSpotX
         {
-            get => (int)((this.Size.Width / 3) + ((this.Size.Width / 3) * 0.30));
+            // size of the snare + 30% of the snare width from left
+            get
+            {
+                int snareSize = (int)Math.Round(this.Size.Width / 3.0);
+                return (int)Math.Round(snareSize + (snareSize * 0.3)); 
+            }
         }
 
         /// <summary>
@@ -136,7 +187,12 @@ namespace MasterDrums.View
         /// </summary>
         private int RightHitSpotX
         {
-            get => (int)((this.Size.Width / 3) + ((this.Size.Width / 3) * 0.65));
+            // size of the snare + 60% size of the snare
+            get
+            {
+                int snareSize = (int)Math.Round(this.Size.Width / 3.0);
+                return (int)Math.Round(snareSize + (snareSize * 0.6));
+            }
         }
 
         /// <summary>
@@ -201,50 +257,63 @@ namespace MasterDrums.View
 
         /// <summary>
         /// Draw the notes on the screen
+        /// Thread safe
         /// </summary>
         /// <param name="g">The graphic object where the drawing is performed</param>
         private void DrawNotes(Graphics g)
         {
-            Pair<INote, Point>[] copy = this._screenNotes.ToArray();
-
-            foreach (Pair<INote, Point> p in copy)
+            try
             {
-                INote note = p.Item1;
-                Point curPoint = p.Item2;
+                this._notesMutex.WaitOne();
+                Triplet<INote, Point, int>[] notesCopy = new Triplet<INote, Point, int>[this._notes.Count];
+                this._notes.CopyTo(notesCopy, 0);
 
-                // draw note
-                int noteSide = (int)Math.Round(this.Width * 0.03);
-                if (note is SpecialNote)
-                    noteSide *= 2;
+                foreach (Triplet<INote, Point, int> x in notesCopy)
+                {
+                    INote note = x.Item1;
+                    Point curPoint = x.Item2;
 
-                g.DrawImage(note.Image, (curPoint.X - (noteSide / 2)), (curPoint.Y - (noteSide / 2)), noteSide, noteSide);
+                    // draw note
+                    int noteSide = (int)Math.Round(this.Width * 0.03);
+                    if (note is SpecialNote)
+                        noteSide *= 2;
 
-                /*                  |\-----> angle
-                 *                  | \
-                 *  HitSpotY ->     |  \    <- diagonalSpace
-                 *                  |___\
-                 *                     ^-- HitSpotX  
-                 */
-                // calc hypo
-                double diagonalSpace = Math.Sqrt(Math.Pow(this.LeftHitSpotX, 2) + Math.Pow(this.HitSpotY, 2));
-                double angle = Math.Acos(this.HitSpotY / diagonalSpace);
-                double speed = diagonalSpace / this.NoteRideTime;
+                    g.DrawImage(note.Image,
+                                (curPoint.X - (noteSide / 2)),
+                                (curPoint.Y - (noteSide / 2)),
+                                noteSide,
+                                noteSide);
 
-                double sy = REFRESH_RATE_MS * speed * Math.Cos(angle);
-                double sx = REFRESH_RATE_MS * speed * Math.Sin(angle);
+                    /*                  |\-----> angle
+                     *                  | \
+                     *  HitSpotY ->     |  \    <- diagonalSpace
+                     *                  |___\
+                     *                     ^-- HitSpotX  
+                     */
+                    double diagonalSpace = Math.Sqrt(Math.Pow(this.LeftHitSpotX, 2) + Math.Pow(this.HitSpotY, 2));
+                    double angle = Math.Acos(this.HitSpotY / diagonalSpace);
+                    double speed = diagonalSpace / this.NoteRideTime;
 
-                int newX;
-                int newY = (int)Math.Round(curPoint.Y + sy);
-                if (note.Position == INote.notePosition.Left)
-                    newX = (int)Math.Round(curPoint.X + sx);
-                else
-                    newX = (int)Math.Round(curPoint.X - sx);
+                    double sy = REFRESH_RATE_MS * speed * Math.Cos(angle);
+                    double sx = REFRESH_RATE_MS * speed * Math.Sin(angle);
 
-                
-                Point newPoint = new Point(newX, newY);
-                p.Item2 = newPoint;
-                if (newPoint.Y > this.HitSpotY + this.Size.Height)
-                    this._screenNotes.Remove(p);
+                    int newX;
+                    int newY = (int)Math.Round(curPoint.Y + sy);
+                    if (note.Position == INote.notePosition.Left)
+                        newX = (int)Math.Round(curPoint.X + sx);
+                    else
+                        newX = (int)Math.Round(curPoint.X - sx);
+
+                    Point newPoint = new Point(newX, newY);
+                    x.Item2 = newPoint;
+                    if (newPoint.Y > this.Size.Height)
+                        this._notes.Remove(x);
+                    else
+                        x.Item2 = newPoint;
+                }
+            } finally
+            {
+                this._notesMutex.ReleaseMutex();
             }
         }
 
@@ -256,7 +325,7 @@ namespace MasterDrums.View
         {
             int scoreX = (int)Math.Round(this.Size.Width / 2.0);
             int scoreY = (int)Math.Round(this.Size.Height * 0.1);
-            g.DrawString(this._mainView.GameScore.ToString(), new Font("Comic Sans MS", 16), new SolidBrush(Color.Black), new Point(scoreX, scoreY));
+            g.DrawString(this._controller.Score.ToString(), new Font("Arial", 16), new SolidBrush(Color.Black), new Point(scoreX, scoreY));
         }
 
         /// <summary>
@@ -264,46 +333,30 @@ namespace MasterDrums.View
         /// </summary>
         public float NoteRideTime
         {
-            get => ((60000 / this._bpm) / 2);
+            get => ((60000 / this._controller.Bpm) / 2);
         }
 
         /// <summary>
-        /// Current bpm playing rate
+        /// Returns the distance from HitSpotY in which a note is considered as not hitted 
+        /// (therefore the hit is wasted) 
         /// </summary>
-        public int Bpm
+        private int WastedDistance
         {
-            set => this._bpm = value;
+            get {
+                double diagonalSpace = Math.Sqrt(Math.Pow(this.LeftHitSpotX, 2) + Math.Pow(this.HitSpotY, 2));
+                double speed = diagonalSpace / this.NoteRideTime;
+                return (int)Math.Round(speed * this._controller.HittedNoteInterval);
+            }
         }
 
         /// <summary>
-        /// Add the note to the stack of the notes that will be showed
-        /// </summary>
-        /// <param name="note">The note launched</param>
-        public void LaunchLeftNote(INote note)
-        {
-            this._screenNotes.Add(new Pair<INote, Point>(note, new Point(0, 0)));
-        }
-
-        public void LaunchPauseNote()
-        {
-        }
-
-        /// <summary>
-        /// Add the note to the stack of the notes that will be showed
-        /// </summary>
-        /// <param name="note">The note launched</param>
-        public void LaunchRightNote(INote note)
-        {
-            this._screenNotes.Add(new Pair<INote, Point>(note, new Point(this.Size.Width, 0)));
-        }
-
-        /// <summary>
-        /// Put down the left stick for 250ms
+        /// Put down the left stick for 250ms and send the hit to the controller
         /// </summary>
         public void LeftNoteHit()
         {
             this._leftStickDown = true;
             this.PlayHitSound();
+            this.Hit(INote.notePosition.Left);
 
             Timer t = new Timer();
             t.Interval = STICK_DOWN_MS;
@@ -322,6 +375,7 @@ namespace MasterDrums.View
         {
             this._rightStickDown = true;
             this.PlayHitSound();
+            this.Hit(INote.notePosition.Right);
 
             Timer t = new Timer();
             t.Interval = STICK_DOWN_MS;
@@ -334,15 +388,96 @@ namespace MasterDrums.View
         }
 
         /// <summary>
+        /// Method called when an hit is performed
+        /// Check wether the hit is conrrect or wasted
+        /// </summary>
+        /// <param name="position">The position if the hit</param>
+        private void Hit(INote.notePosition position)
+        {
+            try
+            {
+                this._notesMutex.WaitOne();
+                Triplet<INote, Point, int> bottomNote = this._notes.First.Value;
+
+                if (bottomNote.Item1.Position == position && 
+                    Math.Abs(bottomNote.Item2.Y - this.HitSpotY) < this.WastedDistance)
+                {
+                    int timestamp = (int)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
+                    int hitDelay = Math.Abs(timestamp - bottomNote.Item3);
+                    this._controller.NoteHitted(bottomNote.Item1, hitDelay);
+                    this._notes.RemoveFirst();
+                }
+                else
+                    this._controller.EmptyHit();
+            } catch
+            {
+                this._controller.EmptyHit();
+            }
+            finally
+            {
+                this._notesMutex.ReleaseMutex();
+            }
+        }
+
+        /// <summary>
         /// Plays the sound of a snare hit
         /// </summary>
         private void PlayHitSound()
         {
-            if (this._mainView.IsRunning)
+            if (this.IsRunning)
             {
                 this._outputDevice.Play();
                 this._audio.Position = 0;
             }
+        }
+
+        /// <summary>
+        /// Return wether the game is running
+        /// </summary>
+        public bool IsRunning
+        {
+            get => this._isRunning;
+        }
+
+        /// <summary>
+        /// Puts the game in pause
+        /// </summary>
+        public void PauseGame()
+        {
+            this._isRunning = false;
+            this._noteGenerator.Pause();
+            this._gameLoopTimer.Stop();
+        }
+
+        /// <summary>
+        /// Resume from pause
+        /// </summary>
+        public void ResumeGame()
+        {
+            this._isRunning = true;
+            this._gameLoopTimer.Start();
+            this._noteGenerator.Resume();
+        }
+
+        /// <summary>
+        /// Start the game
+        /// </summary>
+        public void StartGame()
+        {
+            this._isRunning = true;
+            this._controller.StartGame();
+            this._noteGenerator.Start();
+            this._gameLoopTimer.Start();
+        }
+
+        /// <summary>
+        /// Stops the game
+        /// </summary>
+        public void StopGame()
+        {
+            this._isRunning = false;
+            this._noteGenerator.Stop();
+            this._controller.StopGame();
         }
     }
 }

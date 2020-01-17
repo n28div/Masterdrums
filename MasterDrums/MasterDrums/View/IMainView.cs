@@ -45,51 +45,13 @@ namespace MasterDrums.View
         /// Stop the current game.
         /// </summary>
         void StopGame();
-
-        /// <summary>
-        /// Time required for a note to reach the hit point
-        /// </summary>
-        /// <returns>The timestamp</returns>
-        int RideTime {
-            get;
-        }
-
-        /// <summary>
-        /// Check if the user is playing a game
-        /// </summary>
-        /// <returns>Boolean that inicates if the user is playng a game or not</returns>
-        Boolean IsRunning {
-            get;
-        }
-
-        /// <summary>
-        /// The game score
-        /// </summary>
-        int GameScore
-        {
-            get;
-        }
-
-
         #endregion
 
         #region Game panel
         /// <summary>
-        /// Start moving a left note
-        /// </summary>
-        /// <param name="note">The note being launched</param>
-        void LaunchLeftNote(INote note);
-
-        /// <summary>
         /// Left note trigger
         /// </summary>
         void LeftNoteHit();
-
-        /// <summary>
-        /// Start moving a right note
-        /// </summary>
-        /// <param name="note">The note being launched</param>
-        void LaunchRightNote(INote note);
 
         /// <summary>
         /// Right note trigger
