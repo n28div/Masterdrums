@@ -10,6 +10,7 @@ namespace MasterDrums.View
         private IMainView _mainView;
         private TextBox _txtUsername;
         private NumericUpDown _txtInitialBpm;
+        private ComboBox _gameModeSelection;
 
         /// <summary>
         /// Player name panel is a table with one column and 3 rows.
@@ -99,7 +100,18 @@ namespace MasterDrums.View
             #endregion
 
             #region Game mode controls
-            // TODO
+            Label labelGameMode = new Label();
+            labelGameMode.Text = "Modalità di gioco";
+            this.ApplyStyle(labelGameMode);
+
+            this._gameModeSelection = new ComboBox();
+            this.ApplyStyle(this._gameModeSelection);
+            this._gameModeSelection.Items.Add(new RandomNoteGenerator());
+            this._gameModeSelection.Items.Add(new AlternatedHandNoteGenerator());
+            this._gameModeSelection.SelectedIndex = 0;
+
+            this.Controls.Add(labelGameMode, 0, 2);
+            this.Controls.Add(this._gameModeSelection, 0, 3);
             #endregion
 
             #region Initial bpm controls
@@ -135,8 +147,14 @@ namespace MasterDrums.View
             {
                 string name = this._txtUsername.Text;
                 int initialBpm = (int)this._txtInitialBpm.Value;
-                INoteGenerator gameMode = new RandomNoteGenerator();
-                this._mainView.StartGame(name, initialBpm, gameMode);
+
+                if (this._gameModeSelection.SelectedItem != null)
+                {
+                    INoteGenerator gameMode = (INoteGenerator)this._gameModeSelection.SelectedItem;
+                    this._mainView.StartGame(name, initialBpm, gameMode);
+                }
+                else
+                    MessageBox.Show("E' necessario inserire la modalità per iniziare una partita!");
             }
             else
             {

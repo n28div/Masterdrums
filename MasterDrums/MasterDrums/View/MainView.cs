@@ -253,6 +253,7 @@ namespace MasterDrums.View
             this._controller.PlayerName = playerName;
             this._controller.InitialBpm = initialBpm;
 
+            this._playingPanel.GameMode = gameMode;
             this._playingPanel.StartGame();
         }
 

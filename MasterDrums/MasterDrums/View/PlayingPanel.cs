@@ -20,7 +20,7 @@ namespace MasterDrums.View
         private IMainView _mainView;
         private IController _controller;
 
-        private INoteGenerator _noteGenerator;
+        private INoteGenerator _noteGenerator = null;
         private Timer _gameLoopTimer;
         private bool _isRunning;
 
@@ -45,8 +45,6 @@ namespace MasterDrums.View
             this._controller = controller;
 
             // create the note generator and subscribe as listener
-            this._noteGenerator = new RandomNoteGenerator();
-            this._noteGenerator.Attach(this);
             this._isRunning = false;
 
             // the queue containg the notes viewed by the user
@@ -92,6 +90,21 @@ namespace MasterDrums.View
             finally
             {
                 this._notesMutex.ReleaseMutex();
+            }
+        }
+
+        /// <summary>
+        /// The mode played by the user
+        /// </summary>
+        public INoteGenerator GameMode
+        {
+            get => this._noteGenerator;
+            set {
+                if (this._noteGenerator != null)
+                    this._noteGenerator.Detach(this);
+
+                this._noteGenerator = value;
+                this._noteGenerator.Attach(this);
             }
         }
 

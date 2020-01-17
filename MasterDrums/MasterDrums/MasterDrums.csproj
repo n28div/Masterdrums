@@ -56,6 +56,7 @@
     <Compile Include="Model\Game.cs" />
     <Compile Include="Model\IGame.cs" />
     <Compile Include="Model\INoteGenerator.cs" />
+    <Compile Include="Model\AlternatedHandNoteGenerator.cs" />
     <Compile Include="Model\RandomNoteGenerator.cs" />
     <Compile Include="Model\SpecialNote.cs" />
     <Compile Include="Model\PauseNote.cs" />

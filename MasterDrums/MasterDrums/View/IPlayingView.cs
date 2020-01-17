@@ -26,6 +26,15 @@ namespace MasterDrums.View
         void RightNoteHit();
 
         /// <summary>
+        /// The mode played by the user
+        /// </summary>
+        INoteGenerator GameMode
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         /// Starts the game
         /// </summary>
         void StartGame();

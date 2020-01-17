@@ -54,6 +54,15 @@ namespace MasterDrums.Model
         }
 
         /// <summary>
+        /// The name of the generator
+        /// </summary>
+        /// <returns>The name of the generator</returns>
+        public override string ToString()
+        {
+            return "Combinazioni casuali";
+        }
+
+        /// <summary>
         /// Generate a random note
         /// </summary>
         /// <returns>The note instance</returns>
