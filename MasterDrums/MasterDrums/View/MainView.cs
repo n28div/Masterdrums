@@ -209,21 +209,6 @@ namespace MasterDrums.View
         /// </summary>
         public void HidePlayingPanelView() => this._playingPanel.Hide();
 
-        public void ShowCommandsView()
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void ShowInstructionView()
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void ShowOptionView()
-        {
-            throw new System.NotImplementedException();
-        }
-
         /// <summary>
         /// Shows the playing view
         /// </summary>
@@ -265,6 +250,7 @@ namespace MasterDrums.View
         /// </summary>
         public void Quit()
         {
+            this._playingPanel.StopGame();
             Application.Exit();
         }
 
@@ -303,7 +289,6 @@ namespace MasterDrums.View
         /// </summary>
         public void ResumeGame()
         {
-            this.ClearView();
             this.HideGamePauseView();
             this._playingPanel.ResumeGame();
         }

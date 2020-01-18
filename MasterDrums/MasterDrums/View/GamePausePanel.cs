@@ -8,6 +8,9 @@ using System.Windows.Forms;
 
 namespace MasterDrums.View
 {
+    /// <summary>
+    /// The panel that shows the paused game options
+    /// </summary>
     class GamePausePanel : TableLayoutPanel
     {
         private IMainView _mainView;
@@ -103,6 +106,9 @@ namespace MasterDrums.View
             this.ResumeLayout();
         }
 
+        /// <summary>
+        /// Handles when the user clicks on the resume or quit button asking for confirmation
+        /// </summary>
         private void ResumeOrQuit(object sender, EventArgs e)
         {
             Button clickedButton = sender as Button;

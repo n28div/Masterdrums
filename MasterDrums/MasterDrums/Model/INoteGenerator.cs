@@ -26,7 +26,7 @@ namespace MasterDrums.Model
         public INoteGenerator(int bpm)
         {
             this._bpm = bpm;
-            this._generatorThread = new Thread(new ThreadStart(this.InternalThreadRoutine));
+            this.PrepareThread();
             this._resume = new Semaphore(0, 1);
             this._isPaused = false;
             this._isRunning = false;

@@ -114,9 +114,12 @@ namespace MasterDrums.Controller
             get => this._game.NoteWastedMs;
         }
 
-        public int WastedNotesRemaining()
+        /// <summary>
+        /// The remaining wasted notes
+        /// </summary>
+        public int WastedNotesRemaining
         {
-            return this._game.WastedNotesRemaining();
+            get => this._game.WastedNotesRemaining;
         }
         
     }

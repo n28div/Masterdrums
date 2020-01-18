@@ -140,6 +140,7 @@ namespace MasterDrums.View
             this.DrawNotes(e.Graphics);
             this.DrawScore(e.Graphics);
             this.DrawRemainingErrors(e.Graphics);
+            this.DrawReachedBpm(e.Graphics);
 
             if (this._leftStickDown)
                 this.DrawLeftStickDown(e.Graphics);
@@ -373,7 +374,24 @@ namespace MasterDrums.View
             int errorsY = (int)Math.Round(this.Size.Height * 0.35);
 
             g.DrawString(labelErrors, labelErrorsFont, new SolidBrush(Color.Black), new Point(labelErrorsX, labelErrorsY));
-            g.DrawString(this._controller.WastedNotesRemaining().ToString(), new Font("Arial", 20), new SolidBrush(Color.Black), new Point((this.Width / 2) - 10, errorsY));
+            g.DrawString(this._controller.WastedNotesRemaining.ToString(), new Font("Arial", 20), new SolidBrush(Color.Black), new Point((this.Width / 2) - 10, errorsY));
+        }
+
+        /// <summary>
+        /// Draw the Bpm reached
+        /// </summary>
+        /// <param name="g">The graphic object where the drawing is performed</param>
+        private void DrawReachedBpm(Graphics g)
+        {
+            string label = "BPM: " + this._controller.Bpm;
+            Font labelFont = new Font("Arial", 28);
+            SizeF labelSize = new SizeF();
+            labelSize = g.MeasureString(label, labelFont);
+
+            int labelX = (int)(this.Size.Width - Size.Round(labelSize).Width);
+            int labelY = (int)Math.Round(this.Size.Height * 0.9);
+
+            g.DrawString(label, labelFont, new SolidBrush(Color.Black), new Point(labelX, labelY));
         }
 
         /// <summary>
@@ -508,6 +526,7 @@ namespace MasterDrums.View
         public void ResumeGame()
         {
             this._isRunning = true;
+            this.Draw();
             this._gameLoopTimer.Start();
             this._noteGenerator.Resume();
         }
@@ -529,9 +548,10 @@ namespace MasterDrums.View
         public void StopGame()
         {
             this._isRunning = false;
+            this._notesMutex.Close();
+            this._gameLoopTimer.Stop();
             this._noteGenerator.Stop();
             this._controller.StopGame();
-            
         }
     }
 }
