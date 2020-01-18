@@ -38,6 +38,7 @@ namespace MasterDrums.Controller
         public void StopGame() {
             this._mainView.StopGame();
             this._game.SerializeScore();
+            this._mainView.RefreshHighscores();
         }
 
         /// <summary>
@@ -117,14 +118,6 @@ namespace MasterDrums.Controller
         {
             return this._game.WastedNotesRemaining();
         }
-
-        /// <summary>
-        /// Get the game records 
-        /// </summary>
-        public List<Tuple<int, String>> GetGameRecords()
-        {
-            List<Tuple<int, String>> records = this._game.GetBestResults;
-            return records;
-        }
+        
     }
 }

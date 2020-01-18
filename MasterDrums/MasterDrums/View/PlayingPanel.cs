@@ -531,7 +531,7 @@ namespace MasterDrums.View
             this._isRunning = false;
             this._noteGenerator.Stop();
             this._controller.StopGame();
-            //this._mainView.StopGame();
+            
         }
     }
 }

@@ -84,10 +84,6 @@ namespace MasterDrums.Controller
         /// Remaining notes that can be missed until the game end
         /// </summary>
         int WastedNotesRemaining();
-
-        /// <summary>
-        /// Get the game records
-        /// </summary>
-        List<Tuple<int, String>> GetGameRecords();
+        
     }
 }

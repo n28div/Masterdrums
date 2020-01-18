@@ -65,12 +65,11 @@ namespace MasterDrums.View
         void RightNoteHit();
         #endregion
 
-        #region Highscores panel
+        #region
         /// <summary>
-        /// Get the records game
+        /// Refresh the highscores panel after new records is added
         /// </summary>
-        /// <returns>List containing the best results</returns>
-        List<Tuple<int, String>> GetGameRecords();
+        void RefreshHighscores();
         #endregion
     }
 }

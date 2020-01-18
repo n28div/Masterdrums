@@ -336,14 +336,13 @@ namespace MasterDrums.View
         }
 
         /// <summary>
-        /// Get the game records
+        /// Refresh the highscores panel after new records is added
         /// </summary>
-        public List<Tuple<int, String>> GetGameRecords()
+        public void RefreshHighscores()
         {
-            List<Tuple<int, String>> records = this._controller.GetGameRecords();
-            return records;
+            this._highscoresPanel = new HighscoresPanel(this);
+            this.HighscoresPanelSetup();
         }
-
 
     }
 }

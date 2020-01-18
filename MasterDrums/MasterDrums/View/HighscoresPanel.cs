@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MasterDrums.Model;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
@@ -65,15 +66,13 @@ namespace MasterDrums.View
             this._records.GridLines = true;
 
             // Add columns
-            this._records.Columns.Add("Nome", 200);
-            this._records.Columns.Add("Punteggio", 200);
-            //MessageBox.Show("Width: "+this.ClientSize.Width+"\nHeight: "+ this.ClientSize.Height);
+            this._records.Columns.Add("Nome", 300);
+            this._records.Columns.Add("Punteggio", 300);
 
-
-            List<Tuple<int, String>> records = this.LoadBestResults();
+            List<Tuple<int, String>> records = Game.LoadBestResults();
             String[] items = new string[2];
 
-            foreach(Tuple<int, String> t in records)
+            foreach (Tuple<int, String> t in records)
             {
                 items[0] = t.Item2;
                 items[1] = t.Item1.ToString();
@@ -86,25 +85,6 @@ namespace MasterDrums.View
             this.ResumeLayout();
         }
 
-        private List<Tuple<int, String>> LoadBestResults()
-        {
-            List<Tuple<int, String>> results = new List<Tuple<int, String>>();
-            StreamReader sr = new StreamReader("../../record.txt");
-            while (!sr.EndOfStream)
-            {
-                string line = sr.ReadLine();
-                string[] values = line.Split(';');
-                if (!string.IsNullOrEmpty(line))
-                {
-                    results.Add(new Tuple<int, String>(int.Parse(values[1]), values[0]));
-                }
-            }
-
-            results.Sort();
-            results.Reverse();
-            sr.Close();
-            return results;
-        }
 
         /// </summary>
         /// <param name="c">The input control where the styles are applied</param>
@@ -131,5 +111,4 @@ namespace MasterDrums.View
             this.ResumeLayout();
         }
     }
-
 }

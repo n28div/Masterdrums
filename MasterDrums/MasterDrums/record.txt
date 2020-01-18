@@ -1,6 +1,4 @@
-Matteo;51
-Nicolas;51
-Edoardo;34
-Aldini;67
-Franco;43
-Giulio;49
+Giacomo;4100
+Giorgio;3200
+Matteo;2900
+Francesco;1900

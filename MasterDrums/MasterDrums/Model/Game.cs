@@ -64,20 +64,18 @@ namespace MasterDrums.Model
 
         public void SerializeScore()
         {
-            
+               
             // write the score in the dedicated file
-            this._results = this.LoadBestResults();
+            this._results = Game.LoadBestResults();
             // new result to add
             Tuple<int, String> t = new Tuple<int, String>(this._score, this._playerName);
             if (this._score != 0)
             {
                 AddAndOrderResult(t);
+                this.AddResultToFile();
 
-                StreamWriter sw = new StreamWriter("../debug/record.txt", false);
-                this.AddResultToFile(sw);
-                sw.Close();
             }
-
+            
         }
 
         public int WastedNotesRemaining()
@@ -85,7 +83,7 @@ namespace MasterDrums.Model
             return (20 - this._wastedNotes);
         }
 
-        private List<Tuple<int, String>> LoadBestResults()
+        public static List<Tuple<int, String>> LoadBestResults()
         {
             List<Tuple<int, String>> results = new List<Tuple<int, String>>();
             StreamReader sr = new StreamReader("../../record.txt");
@@ -112,18 +110,14 @@ namespace MasterDrums.Model
             this._results.Reverse();
         }
 
-        private void AddResultToFile(StreamWriter sw)
+        private void AddResultToFile()
         {
-
-            foreach(Tuple<int, String> t in this._results)
+            StreamWriter sw = new StreamWriter("../../record.txt", false);
+            foreach (Tuple<int, String> t in this._results)
             {
                 sw.WriteLine(t.Item2 + ";" + t.Item1);
             }
-        }
-
-        public List<Tuple<int, String>> GetBestResults
-        {
-            get => this._results;
+            sw.Close();
         }
 
     }
