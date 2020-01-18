@@ -104,7 +104,7 @@ namespace MasterDrums.View
         {
             this.SuspendLayout();
             this._btnBack = new Button();
-            this._btnBack.Text = "Inidetro";
+            this._btnBack.Text = "Indietro";
             this._btnBack.Click += new EventHandler((s, e) => this._mainView.MainMenu());
             this.ApplyStyle(this._btnBack);
             this.Controls.Add(this._btnBack, 0, 2);
