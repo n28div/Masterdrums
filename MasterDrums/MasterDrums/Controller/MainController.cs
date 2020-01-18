@@ -36,6 +36,7 @@ namespace MasterDrums.Controller
         /// Saves the player's score.
         /// </summary>
         public void StopGame() {
+            this._mainView.StopGame();
             this._game.SerializeScore();
         }
 
@@ -110,6 +111,20 @@ namespace MasterDrums.Controller
         public int HittedNoteInterval
         {
             get => this._game.NoteWastedMs;
+        }
+
+        public int WastedNotesRemaining()
+        {
+            return this._game.WastedNotesRemaining();
+        }
+
+        /// <summary>
+        /// Get the game records 
+        /// </summary>
+        public List<Tuple<int, String>> GetGameRecords()
+        {
+            List<Tuple<int, String>> records = this._game.GetBestResults;
+            return records;
         }
     }
 }

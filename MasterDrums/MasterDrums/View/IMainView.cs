@@ -1,5 +1,6 @@
 ﻿using MasterDrums.Model;
 using System;
+using System.Collections.Generic;
 
 namespace MasterDrums.View
 {
@@ -62,6 +63,14 @@ namespace MasterDrums.View
         /// Right note trigger
         /// </summary>
         void RightNoteHit();
+        #endregion
+
+        #region Highscores panel
+        /// <summary>
+        /// Get the records game
+        /// </summary>
+        /// <returns>List containing the best results</returns>
+        List<Tuple<int, String>> GetGameRecords();
         #endregion
     }
 }

@@ -1,6 +1,8 @@
 ﻿using MasterDrums.Exception;
 using MasterDrums.Utils;
 using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Windows.Forms;
 
 namespace MasterDrums.Model
@@ -15,6 +17,8 @@ namespace MasterDrums.Model
         private int _bpm = -1;
         private int _score = 0;
         private int _wastedNotes = 0;
+        private List<Tuple<int, String>> _results = new List<Tuple<int, String>>();
+        
 
         /// <summary>
         /// Creates the game instance and sets the initial bpm
@@ -22,6 +26,7 @@ namespace MasterDrums.Model
         /// <param name="initialBpm">The initial bpm</param>
         public Game(int initialBpm) : base()
         {
+            this._results = LoadBestResults();
             this._bpm = initialBpm;
         }
 
@@ -53,15 +58,75 @@ namespace MasterDrums.Model
         {
             this._wastedNotes++;
 
-            if (this._wastedNotes > 20)
+            if (this._wastedNotes >= 20)
                 throw new GameEndedException();
         }
 
         public void SerializeScore()
         {
-            // throw new System.NotImplementedException();
+            
+            // write the score in the dedicated file
+            this._results = this.LoadBestResults();
+            // new result to add
+            Tuple<int, String> t = new Tuple<int, String>(this._score, this._playerName);
+            if (this._score != 0)
+            {
+                AddAndOrderResult(t);
+
+                StreamWriter sw = new StreamWriter("../debug/record.txt", false);
+                this.AddResultToFile(sw);
+                sw.Close();
+            }
+
         }
 
-        
+        public int WastedNotesRemaining()
+        {
+            return (20 - this._wastedNotes);
+        }
+
+        private List<Tuple<int, String>> LoadBestResults()
+        {
+            List<Tuple<int, String>> results = new List<Tuple<int, String>>();
+            StreamReader sr = new StreamReader("../../record.txt");
+            while (!sr.EndOfStream)
+            {
+                string line = sr.ReadLine();
+                string[] values = line.Split(';');
+                if (!string.IsNullOrEmpty(line))
+                {
+                    results.Add(new Tuple<int, String>(int.Parse(values[1]), values[0]));
+                }
+            }
+
+            results.Sort();
+            results.Reverse();
+            sr.Close();
+            return results;
+        } 
+
+        private void AddAndOrderResult(Tuple<int, String> t)
+        {
+            this._results.Add(t);
+            this._results.Sort();
+            this._results.Reverse();
+        }
+
+        private void AddResultToFile(StreamWriter sw)
+        {
+
+            foreach(Tuple<int, String> t in this._results)
+            {
+                sw.WriteLine(t.Item2 + ";" + t.Item1);
+            }
+        }
+
+        public List<Tuple<int, String>> GetBestResults
+        {
+            get => this._results;
+        }
+
     }
 }
+
+

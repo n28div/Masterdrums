@@ -3,7 +3,7 @@ using MasterDrums.Controller;
 using System;
 using System.Windows.Forms;
 using System.Drawing;
-
+using System.Collections.Generic;
 
 namespace MasterDrums.View
 {
@@ -14,6 +14,7 @@ namespace MasterDrums.View
         private NewGamePanel _newGamePanel;
         private PlayingPanel _playingPanel;
         private GamePausePanel _gamePausePanel;
+        private HighscoresPanel _highscoresPanel;
 
         /// <summary>
         /// Constructor that sets the controller to interact with the application model.
@@ -30,6 +31,7 @@ namespace MasterDrums.View
             this._newGamePanel = new NewGamePanel(this);
             this._playingPanel = new PlayingPanel(this, this._controller);
             this._gamePausePanel = new GamePausePanel(this);
+            this._highscoresPanel = new HighscoresPanel(this);
 
             this.KeyPreview = true;
             this.KeyUp += (s, e) =>
@@ -82,6 +84,7 @@ namespace MasterDrums.View
             this.NewGamePanelSetup();
             this.PlayingPanelSetup();
             this.GamePausePanelSetup();
+            this.HighscoresPanelSetup();
         }
 
         /// <summary>
@@ -97,6 +100,21 @@ namespace MasterDrums.View
             this._mainMenuPanel.Location = new Point(mainMenuPanelX, mainMenuPanelY);
             this.Controls.Add(this._mainMenuPanel);
             this._mainMenuPanel.Hide();
+        }
+
+        /// <summary>
+        /// Sets up the highscores panel in the form and hides it
+        /// </summary>
+        private void HighscoresPanelSetup()
+        {
+            int highscoresPanelWidth = this.ClientSize.Width / 2;
+            int highscoresPanelHeight = this.ClientSize.Height / 2;
+            int highscoresPanelX = (this.ClientSize.Width / 2) - (highscoresPanelWidth / 2);
+            int highscoresPanelY = (this.ClientSize.Height / 2) - (highscoresPanelHeight / 2);
+            this._highscoresPanel.Size = new Size(highscoresPanelWidth, highscoresPanelHeight);
+            this._highscoresPanel.Location = new Point(highscoresPanelX, highscoresPanelY);
+            this.Controls.Add(this._highscoresPanel);
+            this._highscoresPanel.Hide();
         }
 
         /// <summary>
@@ -152,13 +170,21 @@ namespace MasterDrums.View
         private void ClearView()
         {
             this._mainMenuPanel.Hide();
+            this._highscoresPanel.Hide();
             this._newGamePanel.Hide();
+            this._playingPanel.Hide();
+            this._gamePausePanel.Hide();
         }
 
         /// <summary>
         /// Shows the main menu
         /// </summary>
         public void ShowMainMenuView() => this._mainMenuPanel.Show();
+
+        /// <summary>
+        /// Shows the highscores view
+        /// </summary>
+        public void ShowHighscoresView() => this._highscoresPanel.Show();
 
         /// <summary>
         /// Shows the player name menu
@@ -198,11 +224,6 @@ namespace MasterDrums.View
             throw new System.NotImplementedException();
         }
 
-        public void ShowHighscoreView()
-        {
-            throw new System.NotImplementedException();
-        }
-
         /// <summary>
         /// Shows the playing view
         /// </summary>
@@ -229,13 +250,14 @@ namespace MasterDrums.View
         public void NewGame()
         {
             this.ClearView();
+            this._newGamePanel.ClearTxtUsername();
             this.ShowNewGameView();
         }
 
         public void Highscores()
         {
-            //throw new System.NotImplementedException();
-            MessageBox.Show("Funzione non ancora implemenata.");
+            this.ClearView();
+            this.ShowHighscoresView();
         }
 
         /// <summary>
@@ -243,7 +265,6 @@ namespace MasterDrums.View
         /// </summary>
         public void Quit()
         {
-            this._controller.StopGame();
             Application.Exit();
         }
 
@@ -296,7 +317,6 @@ namespace MasterDrums.View
             this.HidePlayingPanelView();
             this.HideGamePauseView();
             this.ShowMainMenuView();
-            this._playingPanel.StopGame();
         }
 
         /// <summary>
@@ -314,5 +334,16 @@ namespace MasterDrums.View
         {
             this._playingPanel.RightNoteHit();
         }
+
+        /// <summary>
+        /// Get the game records
+        /// </summary>
+        public List<Tuple<int, String>> GetGameRecords()
+        {
+            List<Tuple<int, String>> records = this._controller.GetGameRecords();
+            return records;
+        }
+
+
     }
 }

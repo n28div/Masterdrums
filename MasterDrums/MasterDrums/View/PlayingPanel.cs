@@ -139,6 +139,7 @@ namespace MasterDrums.View
             this.DrawSnare(e.Graphics);
             this.DrawNotes(e.Graphics);
             this.DrawScore(e.Graphics);
+            this.DrawRemainingErrors(e.Graphics);
 
             if (this._leftStickDown)
                 this.DrawLeftStickDown(e.Graphics);
@@ -158,16 +159,16 @@ namespace MasterDrums.View
         private void DrawSnare(Graphics g)
         {
             int snareSide = (int)Math.Round(this.Size.Width / 3.0);
-            int snareX = (int)Math.Round(this.Size.Width / 3.0);
+            int snareX = (this.Width - snareSide) / 2;
             int snareY = (int)Math.Round(this.Size.Height * 0.6);
             Image snare = Resource.snare;
             g.DrawImage(snare, snareX, snareY, snareSide, snareSide);
 
             // draw right and left hit spot
-            int ellipseHeight = (int)Math.Round(this.Size.Height * 0.05);
-            int ellipseWidth = (int)Math.Round(this.Size.Width * 0.05);
+            int ellipseHeight = (int)Math.Round(this.Size.Height * 0.06);
+            int ellipseWidth  = (int)Math.Round(this.Size.Width * 0.06);
 
-            int leftEllipseX = (int)Math.Round(this.LeftHitSpotX - (ellipseWidth / 2.0));
+            int leftEllipseX  = (int)Math.Round(this.LeftHitSpotX - (ellipseWidth / 2.0));
             int rightEllipseX = (int)Math.Round(this.RightHitSpotX - (ellipseWidth / 2.0));
             int ellipseY = (int)Math.Round(this.HitSpotY - (ellipseHeight / 2.0));
 
@@ -201,11 +202,11 @@ namespace MasterDrums.View
         /// </summary>
         private int RightHitSpotX
         {
-            // size of the snare + 60% size of the snare
+            // size of the snare + 70% size of the snare
             get
             {
                 int snareSize = (int)Math.Round(this.Size.Width / 3.0);
-                return (int)Math.Round(snareSize + (snareSize * 0.6));
+                return (int)Math.Round(snareSize + (snareSize * 0.7));
             }
         }
 
@@ -337,9 +338,42 @@ namespace MasterDrums.View
         /// <param name="g">The graphic object where the drawing is performed</param>
         private void DrawScore(Graphics g)
         {
-            int scoreX = (int)Math.Round(this.Size.Width / 2.0);
-            int scoreY = (int)Math.Round(this.Size.Height * 0.1);
-            g.DrawString(this._controller.Score.ToString(), new Font("Arial", 25), new SolidBrush(Color.Black), new Point(scoreX, scoreY));
+
+            string labelScore = "Punteggio";
+            Font labelScoreFont = new Font("Arial", 35);
+            SizeF labelScoreSize = new SizeF();
+            labelScoreSize = g.MeasureString(labelScore, labelScoreFont);
+
+            SizeF scoreSize = new SizeF();
+            Font scoreFont = new Font("Arial", 25);
+            scoreSize = g.MeasureString(this._controller.Score.ToString(), scoreFont);
+
+            int labelScoreX = (int)Math.Round((this.Size.Width - Size.Round(labelScoreSize).Width)/ 2.0);
+            int scoreX = (int)Math.Round((this.Size.Width - Size.Round(scoreSize).Width) / 2.0);
+            int labelScoreY = (int)Math.Round(this.Size.Height * 0.1);
+            int scoreY = (int)Math.Round(this.Size.Height * 0.2);
+            g.DrawString(labelScore, labelScoreFont, new SolidBrush(Color.Black), new Point(labelScoreX, labelScoreY));
+            g.DrawString(this._controller.Score.ToString(), scoreFont, new SolidBrush(Color.Black), new Point(scoreX, scoreY));
+        }
+
+        /// <summary>
+        /// Draw the number of hit that can be missed before the game ends
+        /// </summary>
+        /// <param name="g">The graphic object where the drawing is performed</param>
+        private void DrawRemainingErrors(Graphics g)
+        {
+
+            string labelErrors = "Colpi errati rimasti";
+            Font labelErrorsFont = new Font("Arial", 28);
+            SizeF labelErrorsSize = new SizeF();
+            labelErrorsSize = g.MeasureString(labelErrors, labelErrorsFont);
+
+            int labelErrorsX = (int)Math.Round((this.Size.Width - Size.Round(labelErrorsSize).Width) / 2.0);
+            int labelErrorsY = (int)Math.Round(this.Size.Height * 0.3);
+            int errorsY = (int)Math.Round(this.Size.Height * 0.35);
+
+            g.DrawString(labelErrors, labelErrorsFont, new SolidBrush(Color.Black), new Point(labelErrorsX, labelErrorsY));
+            g.DrawString(this._controller.WastedNotesRemaining().ToString(), new Font("Arial", 20), new SolidBrush(Color.Black), new Point((this.Width / 2) - 10, errorsY));
         }
 
         /// <summary>
@@ -429,14 +463,12 @@ namespace MasterDrums.View
                     else
                         this._controller.EmptyHit();
                 }
+                this._notesMutex.ReleaseMutex();
             } catch (GameEndedException)
             {
-                MessageBox.Show("La tua partita termina qui. Il tuo punteggio è di " + this._controller.Score.ToString());
-                this.StopGame();
-            }
-            finally
-            {
                 this._notesMutex.ReleaseMutex();
+                MessageBox.Show("La tua partita termina qui! Il tuo punteggio è di " + this._controller.Score.ToString());
+                this.StopGame();
             }
         }
 
@@ -499,7 +531,7 @@ namespace MasterDrums.View
             this._isRunning = false;
             this._noteGenerator.Stop();
             this._controller.StopGame();
-            this._mainView.MainMenu();
+            //this._mainView.StopGame();
         }
     }
 }

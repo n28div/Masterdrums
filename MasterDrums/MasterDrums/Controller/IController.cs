@@ -1,5 +1,7 @@
 ﻿using MasterDrums.Model;
 using MasterDrums.View;
+using System;
+using System.Collections.Generic;
 
 namespace MasterDrums.Controller
 {
@@ -77,5 +79,15 @@ namespace MasterDrums.Controller
         {
             get;
         }
+
+        /// <summary>
+        /// Remaining notes that can be missed until the game end
+        /// </summary>
+        int WastedNotesRemaining();
+
+        /// <summary>
+        /// Get the game records
+        /// </summary>
+        List<Tuple<int, String>> GetGameRecords();
     }
 }

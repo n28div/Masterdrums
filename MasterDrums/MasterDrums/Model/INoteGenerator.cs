@@ -101,6 +101,8 @@ namespace MasterDrums.Model
         public void Stop()
         {
             this._isRunning = false;
+            this._generatorThread.Abort();
+            this.PrepareThread();
         }
 
         /// <summary>
@@ -120,6 +122,14 @@ namespace MasterDrums.Model
             this._isPaused = false;
         }
 
+        /// <summary>
+        /// Prepare the thread which will generate notes
+        /// </summary>
+        public void PrepareThread()
+        {
+            this._generatorThread = new Thread(new ThreadStart(this.InternalThreadRoutine));
+        }
+       
 
     }
 }

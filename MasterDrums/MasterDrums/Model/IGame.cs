@@ -47,5 +47,10 @@ namespace MasterDrums.Model
         {
             get;
         }
+
+        /// <summary>
+        /// Remaining notes that can be missed until the game end
+        /// </summary>
+        int WastedNotesRemaining();
     }
 }

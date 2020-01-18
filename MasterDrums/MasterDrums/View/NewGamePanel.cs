@@ -93,6 +93,7 @@ namespace MasterDrums.View
             this.ApplyStyle(labelUsername);
 
             this._txtUsername = new TextBox();
+            this._txtUsername.Clear();
             this.ApplyStyle(this._txtUsername);
 
             this.Controls.Add(labelUsername, 0, 0);
@@ -160,6 +161,11 @@ namespace MasterDrums.View
             {
                 MessageBox.Show("E' necessario inserire il nome del giocatore per iniziare una partita!");
             }
+        }
+
+        public void ClearTxtUsername()
+        {
+            this._txtUsername.Clear();
         }
     }
 }
