@@ -1,4 +1,0 @@
-Giacomo;4100
-Giorgio;3200
-Matteo;2900
-Francesco;1900

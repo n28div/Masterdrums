@@ -50,7 +50,6 @@ namespace MasterDrums.View
 
             // the queue containg the notes viewed by the user
             this._notes = new LinkedList<Triplet<INote, Point, int>>();
-            this._notesMutex = new System.Threading.Mutex();
 
             // the game loop timer takes care of drawing the required objects in the panel's main picture box
             this._gameLoopTimer = new Timer();
@@ -374,7 +373,7 @@ namespace MasterDrums.View
             int errorsY = (int)Math.Round(this.Size.Height * 0.35);
 
             g.DrawString(labelErrors, labelErrorsFont, new SolidBrush(Color.Black), new Point(labelErrorsX, labelErrorsY));
-            g.DrawString(this._controller.WastedNotesRemaining.ToString(), new Font("Arial", 20), new SolidBrush(Color.Black), new Point((this.Width / 2) - 10, errorsY));
+            g.DrawString(this._controller.WrongHitsRemaining.ToString(), new Font("Arial", 20), new SolidBrush(Color.Black), new Point((this.Width / 2) - 10, errorsY));
         }
 
         /// <summary>
@@ -486,6 +485,10 @@ namespace MasterDrums.View
             {
                 this._notesMutex.ReleaseMutex();
                 MessageBox.Show("La tua partita termina qui! Il tuo punteggio è di " + this._controller.Score.ToString());
+                if(this._controller.Score > (Game.LoadBestResults().ToArray())[0].Item1)
+                    MessageBox.Show("Complimenti "+this._controller.PlayerName +", hai stabilito il nuovo record!\n"
+                        + "\nRecord precedente: "+ (Game.LoadBestResults().ToArray())[0].Item2 + " " + (Game.LoadBestResults().ToArray())[0].Item1.ToString()
+                        + "\n\nNuovo record: "+this._controller.PlayerName + " " + this._controller.Score.ToString());
                 this.StopGame();
             }
         }
@@ -536,6 +539,7 @@ namespace MasterDrums.View
         /// </summary>
         public void StartGame()
         {
+            this._notesMutex = new System.Threading.Mutex();
             this._isRunning = true;
             this._controller.StartGame();
             this._noteGenerator.Start();

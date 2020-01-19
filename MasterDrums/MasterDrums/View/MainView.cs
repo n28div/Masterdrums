@@ -250,8 +250,8 @@ namespace MasterDrums.View
         /// </summary>
         public void Quit()
         {
-            this._playingPanel.StopGame();
-            Application.Exit();
+            //this._playingPanel.StopGame();
+            Environment.Exit(0);
         }
 
         /// <summary>

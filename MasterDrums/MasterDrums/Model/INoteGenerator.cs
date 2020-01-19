@@ -26,7 +26,7 @@ namespace MasterDrums.Model
         public INoteGenerator(int bpm)
         {
             this._bpm = bpm;
-            this.PrepareThread();
+            //this.PrepareThread();
             this._resume = new Semaphore(0, 1);
             this._isPaused = false;
             this._isRunning = false;
@@ -91,8 +91,10 @@ namespace MasterDrums.Model
         /// </summary>
         public void Start()
         {
-            this._generatorThread.Start();
+            this._isPaused = false;
             this._isRunning = true;
+            this.PrepareThread();
+            this._generatorThread.Start();
         }
 
         /// <summary>
@@ -102,7 +104,6 @@ namespace MasterDrums.Model
         {
             this._isRunning = false;
             this._generatorThread.Abort();
-            this.PrepareThread();
         }
 
         /// <summary>

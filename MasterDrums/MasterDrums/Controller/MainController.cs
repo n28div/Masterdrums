@@ -115,9 +115,9 @@ namespace MasterDrums.Controller
         }
 
         /// <summary>
-        /// The remaining wasted notes
+        /// The remaining wrong hits until the game end
         /// </summary>
-        public int WastedNotesRemaining
+        public int WrongHitsRemaining
         {
             get => this._game.WastedNotesRemaining;
         }

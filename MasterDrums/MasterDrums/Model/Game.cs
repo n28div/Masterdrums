@@ -116,7 +116,7 @@ namespace MasterDrums.Model
         public static List<Tuple<int, String>> LoadBestResults()
         {
             List<Tuple<int, String>> results = new List<Tuple<int, String>>();
-            StreamReader sr = new StreamReader("../../record.txt");
+            StreamReader sr = new StreamReader("../../record.csv");
             while (!sr.EndOfStream)
             {
                 string line = sr.ReadLine();
@@ -149,7 +149,7 @@ namespace MasterDrums.Model
         /// </summary>
         private void AddResultToFile()
         {
-            StreamWriter sw = new StreamWriter("../../record.txt", false);
+            StreamWriter sw = new StreamWriter("../../record.csv", false);
             foreach (Tuple<int, String> t in this._results)
             {
                 sw.WriteLine(t.Item2 + ";" + t.Item1);
