@@ -23,7 +23,7 @@ namespace MasterDrums.Model
         }
 
         /// <summary>
-        /// The standard note hit points are 100
+        /// The special note hit points are 200
         /// </summary>
         public override int HitPoint => 200;
 

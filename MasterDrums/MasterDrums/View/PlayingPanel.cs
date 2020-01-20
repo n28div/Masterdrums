@@ -11,7 +11,7 @@ using NAudio.Wave;
 namespace MasterDrums.View
 {
     /// <summary>
-    /// 
+    /// View used to play the game.
     /// </summary>
     class PlayingPanel : Panel, IPlayingView, IPanel, IObserver
     {
@@ -165,8 +165,8 @@ namespace MasterDrums.View
             g.DrawImage(snare, snareX, snareY, snareSide, snareSide);
 
             // draw right and left hit spot
-            int ellipseHeight = (int)Math.Round(this.Size.Height * 0.06);
-            int ellipseWidth  = (int)Math.Round(this.Size.Width * 0.06);
+            int ellipseHeight = (int)Math.Round(this.Size.Height * 0.05);
+            int ellipseWidth  = (int)Math.Round(this.Size.Width * 0.05);
 
             int leftEllipseX  = (int)Math.Round(this.LeftHitSpotX - (ellipseWidth / 2.0));
             int rightEllipseX = (int)Math.Round(this.RightHitSpotX - (ellipseWidth / 2.0));
@@ -226,7 +226,7 @@ namespace MasterDrums.View
         }
 
         /// <summary>
-        /// Draws the left stick up on the screen
+        /// Draws the left stick down on the screen
         /// </summary>
         /// <param name="g">The graphics object where the image is drawed</param>
         private void DrawLeftStickDown(Graphics g)
@@ -256,7 +256,7 @@ namespace MasterDrums.View
         }
 
         /// <summary>
-        /// Draws the right stick up on the screen
+        /// Draws the right stick down on the screen
         /// </summary>
         /// <param name="g">The graphics object where the image is drawed</param>
         private void DrawRightStickDown(Graphics g)
@@ -415,7 +415,7 @@ namespace MasterDrums.View
         }
 
         /// <summary>
-        /// Put down the left stick for 250ms and send the hit to the controller
+        /// Put down the left stick for 250ms
         /// </summary>
         public void LeftNoteHit()
         {

@@ -13,8 +13,7 @@ namespace MasterDrums.View
         private ComboBox _gameModeSelection;
 
         /// <summary>
-        /// Player name panel is a table with one column and 3 rows.
-        /// The 3rd row is used as a spacing row.
+        /// New game panel is a table with one column and 8 rows.
         /// </summary>
         public NewGamePanel(IMainView mainView) : base()
         {
@@ -33,36 +32,40 @@ namespace MasterDrums.View
         {
             /// Table structure:
             /// 
-            /// 0   labelName       14% 
-            /// 1   txtName         14%
+            /// 0   labelName       12% 
+            /// 1   txtName         12%
             /// 
-            /// 2   labelMode       14%
-            /// 3   selectMode      14%
+            /// 2   labelMode       12%
+            /// 3   selectMode      12%
             /// 
-            /// 4   labelInitialBpm 14%
-            /// 5   txtInitialBpm   14%
+            /// 4   labelInitialBpm 12%
+            /// 5   txtInitialBpm   12%
             /// 
             /// 6   startButton     16%
+            /// 7   backButton      12%
 
             this.SuspendLayout();
             this.ColumnCount = 1;
             this.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-            this.RowCount = 4;
+            this.RowCount = 8;
 
             // player name
-            this.RowStyles.Add(new RowStyle(SizeType.Percent, 14F));
-            this.RowStyles.Add(new RowStyle(SizeType.Percent, 14F));
+            this.RowStyles.Add(new RowStyle(SizeType.Percent, 12F));
+            this.RowStyles.Add(new RowStyle(SizeType.Percent, 12F));
 
             // game mode
-            this.RowStyles.Add(new RowStyle(SizeType.Percent, 14F));
-            this.RowStyles.Add(new RowStyle(SizeType.Percent, 14F));
+            this.RowStyles.Add(new RowStyle(SizeType.Percent, 12F));
+            this.RowStyles.Add(new RowStyle(SizeType.Percent, 12F));
 
             // initial bpm
-            this.RowStyles.Add(new RowStyle(SizeType.Percent, 14F));
-            this.RowStyles.Add(new RowStyle(SizeType.Percent, 14F));
+            this.RowStyles.Add(new RowStyle(SizeType.Percent, 12F));
+            this.RowStyles.Add(new RowStyle(SizeType.Percent, 12F));
 
             // start button
             this.RowStyles.Add(new RowStyle(SizeType.Percent, 16F));
+
+            // back button
+            this.RowStyles.Add(new RowStyle(SizeType.Percent, 12F));
 
             this.ResumeLayout();
         }
@@ -139,12 +142,27 @@ namespace MasterDrums.View
             this.Controls.Add(buttonConfirm, 0, 6);
             #endregion
 
+            #region Back option
+            Button buttonBack = new Button();
+            buttonBack.Text = "Indietro";
+            buttonBack.UseVisualStyleBackColor = true;
+            buttonBack.Click += new EventHandler((s, e) => this._mainView. MainMenu());
+            this.ApplyStyle(buttonBack);
+
+            this.Controls.Add(buttonBack, 0, 7);
+            #endregion
+
             this.ResumeLayout();
         }
 
+        /// <summary>
+        /// Used when the user click the confirm button to start new game
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Confirm(object sender, EventArgs e)
         {
-            if (this._txtUsername.Text != "")
+            if (!(string.IsNullOrWhiteSpace(this._txtUsername.Text)))
             {
                 string name = this._txtUsername.Text;
                 int initialBpm = (int)this._txtInitialBpm.Value;
@@ -163,6 +181,9 @@ namespace MasterDrums.View
             }
         }
 
+        /// <summary>
+        /// Clear the player name text box
+        /// </summary>
         public void ClearTxtUsername()
         {
             this._txtUsername.Clear();

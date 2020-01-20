@@ -9,7 +9,7 @@ using MasterDrums.Exception;
 namespace MasterDrums.Controller
 {
     /// <summary>
-    /// Entry point of the game, each controller, view and model is managed through this class.
+    /// Entry point of the game, each view and model is managed through this class.
     /// </summary>
     public class MainController : IController
     {
@@ -20,7 +20,8 @@ namespace MasterDrums.Controller
         private IMainView _mainView = null;
         
         /// <summary>
-        /// Starts generating notes if the player name, the game mode and the initial bpms are set.
+        /// Prepare the game to be ready to be executed
+        /// if the player name, the game mode and the initial bpms are set.
         /// </summary>
         public void StartGame()
         {
@@ -119,7 +120,7 @@ namespace MasterDrums.Controller
         /// </summary>
         public int WrongHitsRemaining
         {
-            get => this._game.WastedNotesRemaining;
+            get => this._game.WrongHitsRemaining;
         }
         
     }

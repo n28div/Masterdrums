@@ -17,7 +17,7 @@ namespace MasterDrums.View
         private HighscoresPanel _highscoresPanel;
 
         /// <summary>
-        /// Constructor that sets the controller to interact with the application model.
+        /// Constructor that sets the controller to interact with the application model
         /// </summary>
         /// <param name="controller">The instance of the controller</param>
         public MainView(IController controller)
@@ -27,6 +27,7 @@ namespace MasterDrums.View
             this._controller = controller;
             this._controller.MainView = this;
 
+            // Create panels
             this._mainMenuPanel = new MainMenuPanel(this);
             this._newGamePanel = new NewGamePanel(this);
             this._playingPanel = new PlayingPanel(this, this._controller);
@@ -80,6 +81,7 @@ namespace MasterDrums.View
             this.StartPosition = FormStartPosition.CenterScreen;
             this.ResumeLayout(false);
 
+            // Formatting each panel with right dimension
             this.MainMenuPanelSetup();
             this.NewGamePanelSetup();
             this.PlayingPanelSetup();
@@ -187,7 +189,7 @@ namespace MasterDrums.View
         public void ShowHighscoresView() => this._highscoresPanel.Show();
 
         /// <summary>
-        /// Shows the player name menu
+        /// Shows the new game option menu
         /// </summary>
         public void ShowNewGameView() => this._newGamePanel.Show();
 
@@ -200,12 +202,12 @@ namespace MasterDrums.View
         }
 
         /// <summary>
-        /// Hide the game pause menu
+        /// Hides the game pause menu
         /// </summary>
         public void HideGamePauseView() => this._gamePausePanel.Hide();
 
         /// <summary>
-        /// Hide the playing panel
+        /// Hides the playing panel
         /// </summary>
         public void HidePlayingPanelView() => this._playingPanel.Hide();
 
@@ -230,7 +232,7 @@ namespace MasterDrums.View
 
         /// <summary>
         /// Called when the user clicks on the new game button in the main menu panel.
-        /// Shows the new game panel which will ask the user to insert his name, initial bpm and game mode.
+        /// Shows the new game panel which will ask the user to insert his name, initial bpm and game mode
         /// </summary>
         public void NewGame()
         {
@@ -250,17 +252,15 @@ namespace MasterDrums.View
         /// </summary>
         public void Quit()
         {
-            //this._playingPanel.StopGame();
             Environment.Exit(0);
         }
 
         /// <summary>
         /// Hide all the panels and show the gaming panel.
-        /// Communicate to the controller that the user wants to start the game
         /// </summary>
-        /// <param name="playerName"></param>
-        /// <param name="initialBpm"></param>
-        /// <param name="gameMode"></param>
+        /// <param name="playerName">The player name</param>
+        /// <param name="initialBpm">The initial bpm</param>
+        /// <param name="gameMode">The game mode selected</param>
         public void StartGame(string playerName, int initialBpm, INoteGenerator gameMode)
         {
             this.ClearView();
@@ -295,7 +295,6 @@ namespace MasterDrums.View
 
         /// <summary>
         /// Stop the current game and return to the initial menù.
-        /// Communicate to the controller that the user wants quit the current game
         /// </summary>
         public void StopGame()
         {

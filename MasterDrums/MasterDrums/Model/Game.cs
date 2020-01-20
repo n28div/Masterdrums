@@ -50,7 +50,7 @@ namespace MasterDrums.Model
         public int Score => this._score;
 
         /// <summary>
-        /// A note is considered as wasted if its perfomed 200ms before or after it would naturally occur
+        /// A note is considered as wasted if it's perfomed 200ms before or after it would naturally occur
         /// </summary>
         public int NoteWastedMs
         {
@@ -101,10 +101,10 @@ namespace MasterDrums.Model
         }
 
         /// <summary>
-        /// 
+        /// Wrong hits remaining until the game ends
         /// </summary>
-        /// <returns></returns>
-        public int WastedNotesRemaining
+        /// <returns>The number of wrong hits that can be executed</returns>
+        public int WrongHitsRemaining
         {
             get => (20 - this._wastedNotes);
         }

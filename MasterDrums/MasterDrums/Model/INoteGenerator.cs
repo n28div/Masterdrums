@@ -20,13 +20,13 @@ namespace MasterDrums.Model
         private INote _noteGenerated;
 
         /// <summary>
-        /// Constructor that sets the initial bpm value and create the internal thread used to infinetely generate notes.
+        /// Constructor that sets the initial bpm value and create the internal thread
+        /// used to infinetely generate notes.
         /// </summary>
         /// <param name="bpm">The bpm value</param>
         public INoteGenerator(int bpm)
         {
             this._bpm = bpm;
-            //this.PrepareThread();
             this._resume = new Semaphore(0, 1);
             this._isPaused = false;
             this._isRunning = false;

@@ -9,7 +9,7 @@ using System.Windows.Forms;
 namespace MasterDrums.View
 {
     /// <summary>
-    /// The panel that shows the paused game options
+    /// The panel that shows the paused game options which are resume or quit
     /// </summary>
     class GamePausePanel : TableLayoutPanel
     {
@@ -18,8 +18,8 @@ namespace MasterDrums.View
         private Button _btnQuit;
 
         /// <summary>
-        /// Player name panel is a table with one column and 3 rows.
-        /// The 3rd row is used as a spacing row.
+        /// The game pause panel is a table with one column and 5 rows.
+        /// The 1st, 2nd and 3rd row are used as a spacing row.
         /// </summary>
         public GamePausePanel(IMainView mainView) : base()
         {
@@ -37,10 +37,11 @@ namespace MasterDrums.View
         private void TableSetup()
         {
             /// Table structure:
-            /// 
+            ///                     20%
             /// 2   btnResume       20% 
-            /// 
+            ///                     20%
             /// 4   btnQuit         20%
+            ///                     20%
 
             this.SuspendLayout();
             this.ColumnCount = 1;
@@ -107,7 +108,7 @@ namespace MasterDrums.View
         }
 
         /// <summary>
-        /// Handles when the user clicks on the resume or quit button asking for confirmation
+        /// Handles when the user clicks on the resume or quit button
         /// </summary>
         private void ResumeOrQuit(object sender, EventArgs e)
         {

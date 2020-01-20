@@ -65,9 +65,9 @@ namespace MasterDrums.View
         void RightNoteHit();
         #endregion
 
-        #region
+        #region Highscores
         /// <summary>
-        /// Refresh the highscores panel after new records is added
+        /// Refresh the highscores panel after new record has been added
         /// </summary>
         void RefreshHighscores();
         #endregion

@@ -27,7 +27,7 @@ namespace MasterDrums.Controller
         }
 
         /// <summary>
-        /// The name of the player who's playing.
+        /// The name of the player who's playing
         /// </summary>
         string PlayerName
         {
@@ -36,7 +36,7 @@ namespace MasterDrums.Controller
         }
 
         /// <summary>
-        /// The initial bpm of the game.
+        /// The initial bpm of the game
         /// </summary>
         int InitialBpm
         {
@@ -64,7 +64,7 @@ namespace MasterDrums.Controller
         /// A note has been hitted by the user
         /// </summary>
         /// <param name="note">The note hitted by the user</param>
-        /// <param name="delay">The in ms from the perfect hit time</param>
+        /// <param name="delay">The time in ms from the perfect hit time</param>
         void NoteHitted(INote note, int delay);
 
         /// <summary>

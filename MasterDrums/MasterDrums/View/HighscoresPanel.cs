@@ -17,8 +17,9 @@ namespace MasterDrums.View
         private Button _btnBack;
 
         /// <summary>
-        /// Player name panel is a table with one column and 3 rows.
-        /// The 3rd row is used as a spacing row.
+        /// Highscores panel is a table with one column and 2 rows.
+        /// The 1st row contains a listview with the game results,
+        /// the 2nd contains a back button to return to the main menù
         /// </summary>
         public HighscoresPanel(IMainView mainView) : base()
         {
@@ -35,8 +36,7 @@ namespace MasterDrums.View
         {
             /// Table structure:
             /// Listview            80%
-            ///        
-            /// Blank space          5%
+            ///                      5%
             /// btnBack             15%
 
             this.SuspendLayout();
@@ -72,6 +72,7 @@ namespace MasterDrums.View
             List<Tuple<int, String>> records = Game.LoadBestResults();
             String[] items = new string[2];
 
+            // Add rows
             foreach (Tuple<int, String> t in records)
             {
                 items[0] = t.Item2;
@@ -98,7 +99,7 @@ namespace MasterDrums.View
         }
 
         /// <summary>
-        /// Sets up the button
+        /// Sets up the back button
         /// </summary>
         private void ButtonSetup()
         {
