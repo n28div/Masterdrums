@@ -13,7 +13,7 @@ namespace MasterDrums.View
     /// <summary>
     /// View used to play the game.
     /// </summary>
-    class PlayingPanel : Panel, IPlayingView, IPanel, IObserver
+    class PlayingPanel : Panel, IPlayingView, IObserver
     {
         private const int STICK_DOWN_MS = 50;
         private const int REFRESH_RATE_MS = 20;
@@ -153,7 +153,7 @@ namespace MasterDrums.View
         }
 
         /// <summary>
-        /// Draws the snare on the background picture box
+        /// Draws the snare on the center of the screen
         /// </summary>
         /// <param name="g">The graphics object where the image is drawed</param>
         private void DrawSnare(Graphics g)
@@ -394,7 +394,7 @@ namespace MasterDrums.View
         }
 
         /// <summary>
-        /// Time that a note takes to go from the top of the screen to the bottom in ms
+        /// Time that a note takes going from the top of the screen to the bottom in ms
         /// </summary>
         public float NoteRideTime
         {
@@ -415,7 +415,7 @@ namespace MasterDrums.View
         }
 
         /// <summary>
-        /// Put down the left stick for 250ms
+        /// Put down the left stick
         /// </summary>
         public void LeftNoteHit()
         {
@@ -434,7 +434,7 @@ namespace MasterDrums.View
         }
 
         /// <summary>
-        /// Put down the right stick for 250ms
+        /// Put down the right stick
         /// </summary>
         public void RightNoteHit()
         {
@@ -454,7 +454,7 @@ namespace MasterDrums.View
 
         /// <summary>
         /// Method called when an hit is performed
-        /// Check wether the hit is conrrect or wasted
+        /// Check wether the hit is counted or wasted
         /// </summary>
         /// <param name="position">The position if the hit</param>
         private void Hit(INote.notePosition position)
@@ -485,10 +485,12 @@ namespace MasterDrums.View
             {
                 this._notesMutex.ReleaseMutex();
                 MessageBox.Show("La tua partita termina qui! Il tuo punteggio è di " + this._controller.Score.ToString());
-                if(this._controller.Score > (Game.LoadBestResults().ToArray())[0].Item1)
+
+                if (this._controller.Score > (Game.LoadBestResults().ToArray())[0].Item1)
                     MessageBox.Show("Complimenti "+this._controller.PlayerName +", hai stabilito il nuovo record!\n"
                         + "\nRecord precedente: "+ (Game.LoadBestResults().ToArray())[0].Item2 + " " + (Game.LoadBestResults().ToArray())[0].Item1.ToString()
                         + "\n\nNuovo record: "+this._controller.PlayerName + " " + this._controller.Score.ToString());
+
                 this.StopGame();
             }
         }
@@ -543,9 +545,15 @@ namespace MasterDrums.View
             this._notesMutex = new System.Threading.Mutex();
             this._notes.Clear();
             this._isRunning = true;
-            this._controller.StartGame();
-            this._noteGenerator.Start();
-            this._gameLoopTimer.Start();
+
+            try {
+                this._controller.StartGame();
+                this._noteGenerator.Start();
+                this._gameLoopTimer.Start();
+            } catch (GameOptionException)
+            {
+                MessageBox.Show("Impossibile iniziare il gioco: bpm iniziali o nome non settati!");
+            }
         }
 
         /// <summary>

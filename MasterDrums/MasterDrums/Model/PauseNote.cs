@@ -7,36 +7,20 @@ using System.Threading.Tasks;
 
 namespace MasterDrums.Model
 {
+    /// <summary>
+    /// Class that represents a pause note 
+    /// </summary>
     class PauseNote : INote
     {
-        /// <summary>
-        /// Class that extends the INote abstract class and represents the pause note 
-        /// </summary>
-
-        /// <summary>
-        /// Constructor of the class that sets the note position.
-        /// </summary>
-        /// <param name="pos">The note position (left or right)</param>
         public PauseNote(notePosition pos)
         {
             this._position = pos;
         }
 
-        /// <summary>
-        /// Image path is non avaiable for the pause note
-        /// </summary>
-        public override Image Image => throw new PauseNotePropertyExcpetion();
+        public override Image Image => null;
 
         /// <summary>
-        /// Sound path is non avaiable for the pause note
-        /// </summary>
-        public override String SoundPath
-        {
-            get => throw new PauseNotePropertyExcpetion();
-        }
-
-        /// <summary>
-        /// The pause note hit points are zero
+        /// The pause note cannot be hit and therefore has 0 point if theoretically hit
         /// </summary>
         public override int HitPoint => 0;
     }

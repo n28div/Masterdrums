@@ -3,10 +3,14 @@ using System.Drawing.Drawing2D;
 
 namespace MasterDrums.Utils
 {
+    /// <summary>
+    /// Class implementing some static methods useful for image processing
+    /// </summary>
     class ImageUtils
     {
         /// <summary>
-        /// method to rotate an image either clockwise or counter-clockwise
+        /// Method to rotate an image either clockwise or counter-clockwise
+        /// taken from https://stackoverflow.com/questions/2163829/how-do-i-rotate-a-picture-in-winforms
         /// </summary>
         /// <param name="img">the image to be rotated</param>
         /// <param name="rotationAngle">the angle (in degrees).

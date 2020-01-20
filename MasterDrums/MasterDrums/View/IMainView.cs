@@ -9,14 +9,13 @@ namespace MasterDrums.View
     /// </summary>
     public interface IMainView
     {
-        #region Main menu panel
         /// <summary>
-        /// Shows the main menu panel
+        /// Shows the main menu view
         /// </summary>
         void MainMenu();
 
         /// <summary>
-        /// Shows the new game panel
+        /// Shows the new game view
         /// </summary>
         void NewGame();
 
@@ -26,12 +25,10 @@ namespace MasterDrums.View
         void Quit();
 
         /// <summary>
-        /// Shows the highscores panel
+        /// Shows the highscores view
         /// </summary>
         void Highscores();
-        #endregion
-
-        #region New game panel
+     
         /// <summary>
         /// Starts a new game
         /// </summary>
@@ -51,9 +48,7 @@ namespace MasterDrums.View
         /// Stop the current game.
         /// </summary>
         void StopGame();
-        #endregion
-
-        #region Game panel
+     
         /// <summary>
         /// Left note trigger
         /// </summary>
@@ -63,13 +58,10 @@ namespace MasterDrums.View
         /// Right note trigger
         /// </summary>
         void RightNoteHit();
-        #endregion
-
-        #region Highscores
+        
         /// <summary>
         /// Refresh the highscores panel after new record has been added
         /// </summary>
         void RefreshHighscores();
-        #endregion
     }
 }

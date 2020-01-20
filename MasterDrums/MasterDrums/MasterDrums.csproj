@@ -60,7 +60,6 @@
     <Compile Include="Model\RandomNoteGenerator.cs" />
     <Compile Include="Model\SpecialNote.cs" />
     <Compile Include="Model\PauseNote.cs" />
-    <Compile Include="Exception\PauseNotePropertyExcpetion.cs" />
     <Compile Include="Model\StandardNote.cs" />
     <Compile Include="Model\INote.cs" />
     <Compile Include="Resource.Designer.cs">
@@ -81,7 +80,6 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="View\IMainView.cs" />
-    <Compile Include="View\IPanel.cs" />
     <Compile Include="View\IPlayingView.cs" />
     <Compile Include="View\MainMenuPanel.cs">
       <SubType>Component</SubType>

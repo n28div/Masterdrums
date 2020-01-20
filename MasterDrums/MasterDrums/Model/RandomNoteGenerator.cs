@@ -8,62 +8,21 @@ using MasterDrums.Utils;
 namespace MasterDrums.Model
 {
     /// <summary>
-    /// Class that produces the notes to be played randomly.
-    /// The class is a singleton.
+    /// Class that produces the notes to be played randomly
     /// </summary>
     class RandomNoteGenerator : INoteGenerator
     {
-        private static RandomNoteGenerator _instance = null;
-
-        /// <summary>
-        /// RandomNoteGenerator constructor simply calls the INoteGenerator constructor.
-        /// </summary>
-        /// <param name="bpm">The initial bpm</param>
         public RandomNoteGenerator(int bpm) : base(bpm) { }
 
-        /// <summary>
-        /// RandomNoteGenerator constructor simply calls the empty INoteGenerator constructor.
-        /// </summary>
         public RandomNoteGenerator() : base() { }
 
-        /// <summary>
-        /// The method used to get the note generator instance.
-        /// If the instance is already created the bpm parameter is ignored.
-        /// </summary>
-        /// <param name="bpm">The initial bpm parameter</param>
-        /// <returns>The RandomNoteGenerator instance</returns>
-        public RandomNoteGenerator Instance(int bpm)
-        {
-            if (_instance == null)
-                _instance = new RandomNoteGenerator(bpm);
-
-            return _instance;
-        }
+        public override string ToString() => "Combinazioni casuali";
 
         /// <summary>
-        /// The method used to get the note generator instance.
-        /// Default bpm to 50.
-        /// </summary>
-        /// <returns>The RandomNoteGenerator instance</returns>
-        public RandomNoteGenerator Instance()
-        {
-            if (_instance == null)
-                _instance = new RandomNoteGenerator();
-
-            return _instance;
-        }
-
-        /// <summary>
-        /// The name of the generator
-        /// </summary>
-        /// <returns>The name of the generator</returns>
-        public override string ToString()
-        {
-            return "Combinazioni casuali";
-        }
-
-        /// <summary>
-        /// Generate a random note
+        /// Generate a random note.
+        /// Same probability of being left or right (50% left 50% right)
+        /// 60% of probability of being a standard note, 30% of being a pause 
+        /// 10% of being special.
         /// </summary>
         /// <returns>The note instance</returns>
         public override INote NextNote()

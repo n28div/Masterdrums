@@ -1,13 +1,12 @@
 ﻿using System;
-using System.Runtime.Serialization;
 
 namespace MasterDrums.Model
 {
+    /// <summary>
+    /// Exception raised when the user name or the initial bpms are not set
+    /// </summary>
     public class GameOptionException : SystemException
     {
-        /// <summary>
-        /// Contructor method of the <c>InsertedNameException</c> class.
-        /// </summary>
         public GameOptionException(string msg) : base(msg) { }
     }
 }

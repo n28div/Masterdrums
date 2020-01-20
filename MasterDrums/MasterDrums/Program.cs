@@ -8,7 +8,9 @@ namespace MasterDrums
     static class Program
     {
         /// <summary>
-        /// Application entry point
+        /// Application entry point. 
+        /// Creates the view and the controller and connects them.
+        /// The model is created in the controller.
         /// </summary>
         [STAThread]
         static void Main()

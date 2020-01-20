@@ -18,7 +18,7 @@ namespace MasterDrums.Controller
         void StopGame();
 
         /// <summary>
-        /// The main view reference, used to show notes
+        /// The main view reference
         /// </summary>
         IMainView MainView
         {
@@ -86,6 +86,5 @@ namespace MasterDrums.Controller
         int WrongHitsRemaining {
             get;
         }
-        
     }
 }

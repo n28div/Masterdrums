@@ -5,18 +5,19 @@ namespace MasterDrums.Model
 {
     /// <summary>
     /// Abstract class for the note generator objects.
-    /// The class implements the Observer generator (to communicate the generated note).
+    /// The class implements the Observer design pattern in order to communicate the generated notes
     /// </summary>
     public abstract class INoteGenerator : ISubject
     {
         public const int MIN_BPM = 30;
         public const int MAX_BPM = 300;
-
         private int _bpm;
+
         private Thread _generatorThread;
         private bool _isRunning;
         private bool _isPaused;
         private Semaphore _resume;
+
         private INote _noteGenerated;
 
         /// <summary>
@@ -58,6 +59,7 @@ namespace MasterDrums.Model
 
         /// <summary>
         /// The private internal routine used to generate notes based on bpm.
+        /// 2 notes are generated in each beat.
         /// </summary>
         private void InternalThreadRoutine()
         {
@@ -73,9 +75,9 @@ namespace MasterDrums.Model
                     this._noteGenerated = this.NextNote();
                     this.Notify();
 
-                    // to calculate the time needed to sleep we simply need to divide 60 (the seconds in 1 minute) by the bpm
-                    // the time calculated is in seconds, so whe convert it into milliseconds
-                    int timeToSleep = (60000 / this._bpm) / 2;
+                    // to calculate the time needed to sleep we simply need to divide 
+                    // 60 * 1000 (the milliseconds in 1 minute) by the bpm
+                    int timeToSleep = ((60 * 1000) / this._bpm) / 2;
                     Thread.Sleep(timeToSleep);
                 }
             }
@@ -93,7 +95,7 @@ namespace MasterDrums.Model
         {
             this._isPaused = false;
             this._isRunning = true;
-            this.PrepareThread();
+            this.InitThread();
             this._generatorThread.Start();
         }
 
@@ -126,11 +128,9 @@ namespace MasterDrums.Model
         /// <summary>
         /// Prepare the thread which will generate notes
         /// </summary>
-        public void PrepareThread()
+        public void InitThread()
         {
             this._generatorThread = new Thread(new ThreadStart(this.InternalThreadRoutine));
         }
-       
-
     }
 }

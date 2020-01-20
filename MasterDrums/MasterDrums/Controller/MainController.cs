@@ -9,7 +9,7 @@ using MasterDrums.Exception;
 namespace MasterDrums.Controller
 {
     /// <summary>
-    /// Entry point of the game, each view and model is managed through this class.
+    /// Main controller, used to reflect the view events in the model.
     /// </summary>
     public class MainController : IController
     {
@@ -20,8 +20,8 @@ namespace MasterDrums.Controller
         private IMainView _mainView = null;
         
         /// <summary>
-        /// Prepare the game to be ready to be executed
-        /// if the player name, the game mode and the initial bpms are set.
+        /// If the initial BPM and the player name are set the game is started
+        /// otherwise an exception of type <c>GameOptionException</c> it raised
         /// </summary>
         public void StartGame()
         {
@@ -33,8 +33,7 @@ namespace MasterDrums.Controller
         }
 
         /// <summary>
-        /// Stops generating notes and increasing bpms.
-        /// Saves the player's score.
+        /// Stops the game and serializes the player's score.
         /// </summary>
         public void StopGame() {
             this._mainView.StopGame();
@@ -47,18 +46,12 @@ namespace MasterDrums.Controller
         /// </summary>
         /// <param name="note">The note hitted</param>
         /// <param name="delay">Delay from the perfect time</param>
-        public void NoteHitted(INote note, int delay)
-        {
-            this._game.Hit(note, delay);
-        }
+        public void NoteHitted(INote note, int delay) => this._game.Hit(note, delay);
 
         /// <summary>
-        /// Called when an empty hit is performed
+        /// Communicate to the model that an empty hit has been performed
         /// </summary>
-        public void EmptyHit()
-        {
-            this._game.Hit();
-        }
+        public void EmptyHit() => this._game.Hit();
 
         /// <summary>
         /// Sets and gets the player's name
@@ -74,19 +67,14 @@ namespace MasterDrums.Controller
         /// </summary>
         public int InitialBpm
         {
-            set
-            {
-                this._initialBpm = value;
-            }
-
+            set => this._initialBpm = value;
             get => this._initialBpm;
         }
 
         /// <summary>
-        /// Current bpm
+        /// Gets the bpm at which the user is playing
         /// </summary>
-        public int Bpm
-        {
+        public int Bpm {
             get => this._game.Bpm;
         }
 
@@ -100,7 +88,7 @@ namespace MasterDrums.Controller
         }
 
         /// <summary>
-        /// The user score
+        /// The score totalized by the user
         /// </summary>
         public int Score
         {
@@ -108,7 +96,7 @@ namespace MasterDrums.Controller
         }
 
         /// <summary>
-        /// Time after or before which an hit is considered as wasted
+        /// Time after or before an hit is considered as wasted
         /// </summary>
         public int HittedNoteInterval
         {
@@ -116,7 +104,7 @@ namespace MasterDrums.Controller
         }
 
         /// <summary>
-        /// The remaining wrong hits until the game end
+        /// The remaining wrong hits until the game ends
         /// </summary>
         public int WrongHitsRemaining
         {

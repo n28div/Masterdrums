@@ -2,6 +2,8 @@
 {
     /// <summary>
     /// Class representing a tuple of three objects (a triplet)
+    /// The following is used in place of c# Tuple because Tuple's are immutable,
+    /// Triplet's elements will be mutable.
     /// </summary>
     /// <typeparam name="T1">Type of the first object</typeparam>
     /// <typeparam name="T2">Type of the second object</typeparam>

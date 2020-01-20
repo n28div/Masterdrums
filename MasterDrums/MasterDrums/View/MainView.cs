@@ -10,6 +10,7 @@ namespace MasterDrums.View
     public class MainView : Form, IMainView
     {
         private IController _controller;
+
         private MainMenuPanel _mainMenuPanel;
         private NewGamePanel _newGamePanel;
         private PlayingPanel _playingPanel;
@@ -71,9 +72,9 @@ namespace MasterDrums.View
             // Main form setup
             this.SuspendLayout();
 
+            // fullscreen
             int screenWidth = Screen.PrimaryScreen.Bounds.Width;
             int screenHeight = Screen.PrimaryScreen.Bounds.Height;
-
             this.ClientSize = new Size(screenWidth, screenHeight);
             this.ControlBox = false;
             this.FormBorderStyle = FormBorderStyle.FixedSingle;
@@ -241,6 +242,9 @@ namespace MasterDrums.View
             this.ShowNewGameView();
         }
 
+        /// <summary>
+        /// Shows the highscores view
+        /// </summary>
         public void Highscores()
         {
             this.ClearView();
@@ -256,7 +260,7 @@ namespace MasterDrums.View
         }
 
         /// <summary>
-        /// Hide all the panels and show the gaming panel.
+        /// Hide all the panels and shows the gaming panel.
         /// </summary>
         /// <param name="playerName">The player name</param>
         /// <param name="initialBpm">The initial bpm</param>
@@ -274,7 +278,7 @@ namespace MasterDrums.View
         }
 
         /// <summary>
-        /// Show the pause panel.
+        /// Show the pause panel (on top of the playing panel).
         /// Communicate to the playing panel that the user wants to pause the game
         /// </summary>
         public void PauseGame()
@@ -294,7 +298,7 @@ namespace MasterDrums.View
         }
 
         /// <summary>
-        /// Stop the current game and return to the initial menù.
+        /// Stop the current game and return to the initial menu.
         /// </summary>
         public void StopGame()
         {
@@ -312,7 +316,7 @@ namespace MasterDrums.View
         }
 
         /// <summary>
-        /// Right note hit attempt
+        /// Right note ha been hit
         /// </summary>
         public void RightNoteHit()
         {
@@ -320,7 +324,7 @@ namespace MasterDrums.View
         }
 
         /// <summary>
-        /// Refresh the highscores panel after new records is added
+        /// Refresh the highscores panel after new records are added
         /// </summary>
         public void RefreshHighscores()
         {

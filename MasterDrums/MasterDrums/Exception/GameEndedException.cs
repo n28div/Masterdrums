@@ -2,11 +2,11 @@
 
 namespace MasterDrums.Exception
 {
+    /// <summary>
+    /// Exception launched when the user lose the game and it must end
+    /// </summary>
     public class GameEndedException : SystemException
     {
-        /// <summary>
-        /// Exception launched when the game must be ended.
-        /// </summary>
         public GameEndedException() : base() { }
     }
 }

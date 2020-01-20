@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace MasterDrums.Model
 {
     /// <summary>
-    /// Abstract class that represents the base note
+    /// Abstract class that represents a base note
     /// </summary>
     public abstract class INote
     {
@@ -17,16 +17,14 @@ namespace MasterDrums.Model
         /// </summary>
         public enum notePosition
         {
-            /// <summary>Left arm.</summary>
             Left,
-            /// <summary>Right arm.</summary>
             Right
         }
 
         protected notePosition _position;
 
         /// <summary>
-        /// The image displayed in the note PictureBox
+        /// The image displayed for the note
         /// </summary>
         /// <returns>
         /// The image instance
@@ -36,21 +34,10 @@ namespace MasterDrums.Model
         }
 
         /// <summary>
-        /// The sound played when the user hits the note
+        /// The points gained by the user when a perfect hit is performed
         /// </summary>
         /// <returns>
-        /// The path where the sound can be find
-        /// </returns>
-        public abstract String SoundPath
-        {
-            get;
-        }
-
-        /// <summary>
-        /// The hit points of the note
-        /// </summary>
-        /// <returns>
-        /// The hit points of the note
+        /// The hit points
         /// </returns>
         public abstract int HitPoint
         {
@@ -58,7 +45,7 @@ namespace MasterDrums.Model
         }
 
         /// <summary>
-        /// The note position
+        /// The note position on the screen (left or right)
         /// </summary>
         /// <returns>
         /// The note position

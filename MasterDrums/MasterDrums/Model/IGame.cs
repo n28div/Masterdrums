@@ -6,6 +6,10 @@ using System.Threading.Tasks;
 
 namespace MasterDrums.Model
 {
+    /// <summary>
+    /// Interface for a class tha will take care of implementing the game mechanics
+    /// such as score keeping and bpm increasing in time.
+    /// </summary>
     public interface IGame
     {
         /// <summary>

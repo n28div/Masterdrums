@@ -9,20 +9,20 @@ namespace MasterDrums.Model
 {
     /// <summary>
     /// The game class contains the game state informations.
-    /// It is a singleton class.
     /// </summary>
     public class Game : IGame
     {
         private string _playerName = null;
         private int _bpm = -1;
+
         private int _score = 0;
         private int _wastedNotes = 0;
         private int _hittedNotes = 0;
+
         private List<Tuple<int, String>> _results = new List<Tuple<int, String>>();
-        
 
         /// <summary>
-        /// Creates the game instance and sets the initial bpm
+        /// Creates the game instance, sets the initial bpm and loads the records internally
         /// </summary>
         /// <param name="initialBpm">The initial bpm</param>
         public Game(int initialBpm) : base()
@@ -32,7 +32,8 @@ namespace MasterDrums.Model
         }
 
         /// <summary>
-        /// The player's name
+        /// Sets the player's name.
+        /// null is used if the player name is an empty string
         /// </summary>
         public string PlayerName {
             get => this._playerName;
@@ -50,7 +51,7 @@ namespace MasterDrums.Model
         public int Score => this._score;
 
         /// <summary>
-        /// A note is considered as wasted if it's perfomed 200ms before or after it would naturally occur
+        /// A note is considered as wasted if it's perfomed 50ms before or after it would naturally occur
         /// </summary>
         public int NoteWastedMs
         {
@@ -58,7 +59,9 @@ namespace MasterDrums.Model
         }
 
         /// <summary>
-        /// Method called when a note has been hit
+        /// Method called when a note has been hit.
+        /// Every 5 notes hitted the bpm is increased by 1,
+        /// Every 2ms of delay from the perfect hit represents a 1 point penalty
         /// </summary>
         /// <param name="note">The note hitted</param>
         /// <param name="deltaT">The distance in time from the perfect hit time</param>
@@ -85,7 +88,7 @@ namespace MasterDrums.Model
         }
 
         /// <summary>
-        /// Called to serialize the user score on a file
+        /// Serialize the user score to a file
         /// </summary>
         public void SerializeScore()
         {
@@ -110,7 +113,7 @@ namespace MasterDrums.Model
         }
 
         /// <summary>
-        /// Loads the record from the file containg the records
+        /// Loads the highscores from the file containg them
         /// </summary>
         /// <returns>A list of record in the format score - name</returns>
         public static List<Tuple<int, String>> LoadBestResults()
@@ -134,7 +137,7 @@ namespace MasterDrums.Model
         } 
 
         /// <summary>
-        /// Add a new result to the internal list
+        /// Add a new score to the internal list
         /// </summary>
         /// <param name="t">The new result</param>
         private void AddAndOrderResult(Tuple<int, String> t)
@@ -145,7 +148,7 @@ namespace MasterDrums.Model
         }
 
         /// <summary>
-        /// Write results to file
+        /// Write results to csv file
         /// </summary>
         private void AddResultToFile()
         {
