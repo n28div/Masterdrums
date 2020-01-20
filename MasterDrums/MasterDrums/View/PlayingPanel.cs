@@ -529,6 +529,7 @@ namespace MasterDrums.View
         public void ResumeGame()
         {
             this._isRunning = true;
+            this._notes.Clear();
             this.Draw();
             this._gameLoopTimer.Start();
             this._noteGenerator.Resume();
@@ -540,6 +541,7 @@ namespace MasterDrums.View
         public void StartGame()
         {
             this._notesMutex = new System.Threading.Mutex();
+            this._notes.Clear();
             this._isRunning = true;
             this._controller.StartGame();
             this._noteGenerator.Start();
