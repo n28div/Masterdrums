@@ -69,13 +69,15 @@ namespace MasterDrums.View
             String[] items = new string[2];
 
             // Add rows
-            foreach (Tuple<int, String> t in records)
-            {
-                items[0] = t.Item2;
-                items[1] = t.Item1.ToString();
-                this._records.Items.Add(new ListViewItem(items));
+            if (records != null)
+            { 
+                foreach (Tuple<int, String> t in records)
+                {
+                    items[0] = t.Item2;
+                    items[1] = t.Item1.ToString();
+                    this._records.Items.Add(new ListViewItem(items));
+                }
             }
-
             this.ApplyStyle(this._records);
             this.Controls.Add(this._records, 0, 0);
 

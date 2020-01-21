@@ -246,8 +246,15 @@ namespace MasterDrums.View
         /// </summary>
         public void Highscores()
         {
-            this.ClearView();
-            this.ShowHighscoresView();
+            if(Game.LoadBestResults() != null)
+            { 
+                this.ClearView();
+                this.ShowHighscoresView();
+            }
+            else
+            {
+                MessageBox.Show("Nessun risultato presente!");
+            }
         }
 
         /// <summary>

@@ -116,22 +116,29 @@ namespace MasterDrums.Model
         /// <returns>A list of record in the format score - name</returns>
         public static List<Tuple<int, String>> LoadBestResults()
         {
-            List<Tuple<int, String>> results = new List<Tuple<int, String>>();
-            StreamReader sr = new StreamReader("../../record.csv");
-            while (!sr.EndOfStream)
+            try
             {
-                string line = sr.ReadLine();
-                string[] values = line.Split(';');
-                if (!string.IsNullOrEmpty(line))
+                List<Tuple<int, String>> results = new List<Tuple<int, String>>();
+                StreamReader sr = new StreamReader("../../record.csv");
+                while (!sr.EndOfStream)
                 {
-                    results.Add(new Tuple<int, String>(int.Parse(values[1]), values[0]));
+                    string line = sr.ReadLine();
+                    string[] values = line.Split(';');
+                    if (!string.IsNullOrEmpty(line))
+                    {
+                        results.Add(new Tuple<int, String>(int.Parse(values[1]), values[0]));
+                    }
                 }
-            }
 
-            results.Sort();
-            results.Reverse();
-            sr.Close();
-            return results;
+                results.Sort();
+                results.Reverse();
+                sr.Close();
+                return results;
+            }
+            catch(FileNotFoundException)
+            {
+                return null;
+            }
         } 
 
         /// <summary>
@@ -140,9 +147,17 @@ namespace MasterDrums.Model
         /// <param name="t">The new result</param>
         private void AddAndOrderResult(Tuple<int, String> t)
         {
-            this._results.Add(t);
-            this._results.Sort();
-            this._results.Reverse();
+            if (this._results != null)
+            {
+                this._results.Add(t);
+                this._results.Sort();
+                this._results.Reverse();
+            }
+            else
+            {
+                this._results = new List<Tuple<int, String>>();
+                this._results.Add(t);
+            }
         }
 
         /// <summary>
