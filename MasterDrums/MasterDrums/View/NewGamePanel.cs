@@ -126,6 +126,7 @@ namespace MasterDrums.View
             this._txtInitialBpm = new NumericUpDown();
             this._txtInitialBpm.Minimum = INoteGenerator.MIN_BPM;
             this._txtInitialBpm.Maximum = INoteGenerator.MAX_BPM;
+            this._txtInitialBpm.ReadOnly = true;
             this.ApplyStyle(this._txtInitialBpm);
 
             this.Controls.Add(labelInitialBpm, 0, 4);

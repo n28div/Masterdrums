@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace MasterDrums.Utils
+﻿namespace MasterDrums.Utils
 {
     /// <summary>
     /// Interface for the Observable actor used for the Observable pattern.

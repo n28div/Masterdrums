@@ -1,7 +1,6 @@
 ﻿using System;
 using MasterDrums.Controller;
 using MasterDrums.View;
-using System.Windows.Forms;
 
 namespace MasterDrums
 {

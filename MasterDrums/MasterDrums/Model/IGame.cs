@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace MasterDrums.Model
+﻿namespace MasterDrums.Model
 {
     /// <summary>
     /// Interface for a class tha will take care of implementing the game mechanics

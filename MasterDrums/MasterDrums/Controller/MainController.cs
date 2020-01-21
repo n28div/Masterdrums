@@ -1,10 +1,5 @@
 ﻿using MasterDrums.Model;
 using MasterDrums.View;
-using MasterDrums.Utils;
-using System.Collections.Generic;
-using System;
-using System.Windows.Forms;
-using MasterDrums.Exception;
 
 namespace MasterDrums.Controller
 {

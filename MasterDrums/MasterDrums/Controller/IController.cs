@@ -1,7 +1,5 @@
 ﻿using MasterDrums.Model;
 using MasterDrums.View;
-using System;
-using System.Collections.Generic;
 
 namespace MasterDrums.Controller
 {

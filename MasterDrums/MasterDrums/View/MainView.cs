@@ -3,7 +3,6 @@ using MasterDrums.Controller;
 using System;
 using System.Windows.Forms;
 using System.Drawing;
-using System.Collections.Generic;
 
 namespace MasterDrums.View
 {
