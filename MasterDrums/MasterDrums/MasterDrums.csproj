@@ -125,7 +125,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="record.csv" />
     <None Include="Resources\special.gif" />
     <None Include="Resources\green.png" />
     <None Include="Resources\blue.png" />

@@ -486,10 +486,12 @@ namespace MasterDrums.View
                 this._notesMutex.ReleaseMutex();
                 MessageBox.Show("La tua partita termina qui! Il tuo punteggio è di " + this._controller.Score.ToString());
 
-                if (this._controller.Score > (Game.LoadBestResults().ToArray())[0].Item1)
-                    MessageBox.Show("Complimenti "+this._controller.PlayerName +", hai stabilito il nuovo record!\n"
-                        + "\nRecord precedente: "+ (Game.LoadBestResults().ToArray())[0].Item2 + " " + (Game.LoadBestResults().ToArray())[0].Item1.ToString()
-                        + "\n\nNuovo record: "+this._controller.PlayerName + " " + this._controller.Score.ToString());
+                if(Game.LoadBestResults() != null)
+                { 
+                    if (this._controller.Score > (Game.LoadBestResults().ToArray())[0].Item1)
+                        MessageBox.Show("Complimenti "+this._controller.PlayerName +", hai stabilito il nuovo record!\n"
+                            + "\n\nNuovo record: "+this._controller.PlayerName + " " + this._controller.Score.ToString());
+                }
 
                 this.StopGame();
             }
